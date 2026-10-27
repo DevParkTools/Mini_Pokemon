@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no,viewport-fit=cover">
 <meta name="theme-color" content="#0b0b10">
 <meta name="apple-mobile-web-app-capable" content="yes">
-<title>미니 몬스터 골드</title>
+<title>미니 몬스터 어드벤처</title>
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/galmuri@latest/dist/galmuri.css">
 <style>
 html,body{margin:0;height:100%;background:#0b0b10;overflow:hidden;touch-action:none;user-select:none;-webkit-user-select:none;-webkit-touch-callout:none;-webkit-tap-highlight-color:transparent;overscroll-behavior:none}
@@ -67,7 +67,18 @@ function chordBass(cs){const o=[],p=[0,2,1,2,0,2,1,2];for(let i=0;i<cs.length;i+
 const rn=(a,b,c)=>[[a,.5],[b,.5],[c,.5],[b,.5],[a,.5],[b,.5],[c,1]];
 const ar=(a,b,c)=>[[a,1],[b,1],[c,1],[b,1]];
 const bt=r=>[0,0,12,0,0,0,12,0].map(k=>[r+k,.5]);
+const ar16=(a,b,c)=>{const o=[];for(let i=0;i<4;i++)o.push([a,.25],[b,.25],[c,.25],[b,.25]);return o};
+const bb=(r,f)=>[[r,1],[f,1],[r,1],[f,1]];
 const TRK={
+rival:{bpm:172,ch:[
+{ty:'square',v:.028,r:.8,n:[[69,.5],[69,.5],[72,.5],[76,.5],[75,.5],[76,.5],[72,.5],[69,.5],[71,.5],[71,.5],[74,.5],[77,.5],[76,.5],[77,.5],[74,.5],[71,.5],[72,.5],[72,.5],[76,.5],[79,.5],[78,.5],[79,.5],[76,.5],[72,.5],[76,1],[74,1],[72,.5],[71,.5],[69,1]]},
+{ty:'square',v:.035,r:.8,n:[].concat(bt(45),bt(47),bt(48),bt(40))},
+{ty:'drum',v:1,r:1,n:rep2([[1,.5],[2,.5],[3,.5],[2,.5],[1,.5],[1,.5],[3,.5],[2,.5]],4)}]},
+leader:{bpm:138,ch:[
+{ty:'square',v:.03,r:.95,n:[[72,1.5],[76,.5],[79,1],[76,1],[77,1.5],[81,.5],[84,1],[81,1],[79,1.5],[83,.5],[86,1],[83,1],[84,2],[79,1],[72,1]]},
+{ty:'square',v:.016,r:.6,n:[].concat(ar16(60,64,67),ar16(65,69,72),ar16(67,71,74),ar16(64,67,72))},
+{ty:'triangle',v:.08,r:.9,n:[].concat(bb(36,43),bb(41,48),bb(43,50),bb(45,52))},
+{ty:'drum',v:1,r:1,n:rep2([[1,1],[3,.5],[3,.5],[1,1],[2,1]],4)}]},
 field:{bpm:116,ch:[
 {ty:'square',v:.03,r:.9,n:[[76,1],[79,1],[76,1],[72,1],[69,1],[72,1],[76,2],[77,1],[81,1],[77,1],[72,1],[74,2],[71,1],[67,1],[76,1],[79,1],[84,1],[79,1],[81,1],[76,1],[72,1],[69,1],[77,1],[76,1],[74,1],[72,1],[74,1],[71,1],[74,2]]},
 {ty:'triangle',v:.07,r:.95,n:chordBass([CC[0],CC[1],CC[2],CC[3],CC[0],CC[1],CC[2],CC[3]])}]},
@@ -76,7 +87,7 @@ battle:{bpm:156,ch:[
 {ty:'square',v:.035,r:.8,n:[].concat(bt(45),bt(43),bt(41),bt(40),bt(45),bt(43),bt(41),bt(40))},
 {ty:'drum',v:1,r:1,n:rep2([[1,.5],[2,.5],[3,.5],[2,.5],[1,.5],[2,.5],[3,.5],[2,.5]],8)}]}
 };
-const mk={name:'',g:null,i:[0,0,0],nt:[0,0,0]};
+const mk={name:'',g:null,i:[0,0,0,0],nt:[0,0,0,0]};
 function note(f,t,d,ty,v,dst){const o=AC.createOscillator(),g=AC.createGain();o.type=ty;o.frequency.value=f;g.gain.setValueAtTime(.0001,t);g.gain.linearRampToValueAtTime(v,t+.01);g.gain.exponentialRampToValueAtTime(.0001,t+d);o.connect(g);g.connect(dst);o.start(t);o.stop(t+d+.02)}
 function drum(k,t,dst){
 if(k===1){const o=AC.createOscillator(),g=AC.createGain();o.type='sine';o.frequency.setValueAtTime(150,t);o.frequency.exponentialRampToValueAtTime(40,t+.12);g.gain.setValueAtTime(.12,t);g.gain.exponentialRampToValueAtTime(.001,t+.14);o.connect(g);g.connect(dst);o.start(t);o.stop(t+.16)}
@@ -97,10 +108,10 @@ mk.name=w;
 if(!w){mk.g=null;return}
 mk.g=AC.createGain();mk.g.connect(mg);
 const t=AC.currentTime+.08;
-for(let c=0;c<3;c++){mk.i[c]=0;mk.nt[c]=t}}
+for(let c=0;c<4;c++){mk.i[c]=0;mk.nt[c]=t}}
 function musUpdate(){
 if(!AC)return;
-const w=S.bgm?(mode==='battle'?'battle':'field'):'';
+const w=S.bgm?(mode==='battle'?(B&&B.tr&&(B.tr.ch==='rival'||B.tr.ch==='leader')?B.tr.ch:'battle'):'field'):'';
 if(w!==mk.name)setTrack(w)}
 setInterval(musTick,50);
 
@@ -198,16 +209,16 @@ outline(c);out.push(c)}
 return out}
 
 const SP=[
-{n:'불꼬마',t:1,hp:44,at:52,df:43,sd:65,evL:10,evT:1,ls:0,g:'liz',c:['#e86030','#f8d890','#f89828','#f8e040'],e:0},
-{n:'불룡이',t:1,hp:58,at:68,df:58,sd:80,evL:0,evT:0,ls:0,g:'liz',c:['#d84020','#f8d890','#f89828','#f8e040'],e:1},
-{n:'물방이',t:2,hp:50,at:48,df:65,sd:43,evL:10,evT:3,ls:1,g:'tur',c:['#58b0f0','#f8f0c8','#2868c8','#78c8f8'],e:0},
-{n:'물보라',t:2,hp:68,at:63,df:80,sd:58,evL:0,evT:0,ls:1,g:'tur',c:['#3890e0','#f8f0c8','#2050b0','#78c8f8'],e:1},
-{n:'잎싹이',t:3,hp:45,at:49,df:65,sd:45,evL:10,evT:5,ls:2,g:'spr',c:['#58c068','#f8f0c8','#28a038','#f87898'],e:0},
-{n:'숲지기',t:3,hp:62,at:62,df:80,sd:60,evL:0,evT:0,ls:2,g:'spr',c:['#48a858','#f8f0c8','#208030','#f87898'],e:1},
-{n:'짹짹이',t:5,hp:40,at:45,df:40,sd:56,evL:11,evT:7,ls:3,g:'bird',c:['#c89860','#f8e8c8','#f8a820','#9a6838'],e:0},
-{n:'매짹이',t:5,hp:63,at:60,df:55,sd:71,evL:0,evT:0,ls:3,g:'bird',c:['#a87840','#f8e8c8','#f8a820','#7a5028'],e:1},
-{n:'찌릿쥐',t:4,hp:35,at:55,df:35,sd:90,evL:0,evT:0,ls:4,g:'mouse',c:['#f8d838','#f8f0b0','#f04040','#e8b020'],e:0},
-{n:'솜토끼',t:0,hp:55,at:48,df:50,sd:50,evL:0,evT:0,ls:5,g:'bun',c:['#f8f0e8','#f8c8d0','#f898a8','#d8d0c8'],e:0}
+{n:'이글이',t:1,hp:44,at:52,df:43,sd:65,evL:10,evT:1,ls:0,g:'liz',c:['#e86030','#f8d890','#f89828','#f8e040'],e:0},
+{n:'이글룡',t:1,hp:58,at:68,df:58,sd:80,evL:0,evT:0,ls:0,g:'liz',c:['#d84020','#f8d890','#f89828','#f8e040'],e:1},
+{n:'찰랑이',t:2,hp:50,at:48,df:65,sd:43,evL:10,evT:3,ls:1,g:'tur',c:['#58b0f0','#f8f0c8','#2868c8','#78c8f8'],e:0},
+{n:'찰랑갑',t:2,hp:68,at:63,df:80,sd:58,evL:0,evT:0,ls:1,g:'tur',c:['#3890e0','#f8f0c8','#2050b0','#78c8f8'],e:1},
+{n:'움트리',t:3,hp:45,at:49,df:65,sd:45,evL:10,evT:5,ls:2,g:'spr',c:['#58c068','#f8f0c8','#28a038','#f87898'],e:0},
+{n:'꽃트리',t:3,hp:62,at:62,df:80,sd:60,evL:0,evT:0,ls:2,g:'spr',c:['#48a858','#f8f0c8','#208030','#f87898'],e:1},
+{n:'푸드덕',t:5,hp:40,at:45,df:40,sd:56,evL:11,evT:7,ls:3,g:'bird',c:['#c89860','#f8e8c8','#f8a820','#9a6838'],e:0},
+{n:'창공매',t:5,hp:63,at:60,df:55,sd:71,evL:0,evT:0,ls:3,g:'bird',c:['#a87840','#f8e8c8','#f8a820','#7a5028'],e:1},
+{n:'번개쥐',t:4,hp:35,at:55,df:35,sd:90,evL:0,evT:0,ls:4,g:'mouse',c:['#f8d838','#f8f0b0','#f04040','#e8b020'],e:0},
+{n:'구름토',t:0,hp:55,at:48,df:50,sd:50,evL:0,evT:0,ls:5,g:'bun',c:['#f8f0e8','#f8c8d0','#f898a8','#d8d0c8'],e:0}
 ];
 const LS=[
 [[1,0],[1,1],[3,19],[5,18],[7,2],[11,3]],
@@ -219,23 +230,23 @@ const LS=[
 ];
 SP.forEach(s=>{s.ls=LS[s.ls]});
 const MV=[
-['몸통박치기',0,40,100,35],['불꽃세례',1,40,100,25],['불꽃탄',1,60,95,15],['불기둥',1,85,90,10],
-['물대포',2,40,100,25],['파도타기',2,60,95,15],['물폭탄',2,85,90,10],
-['넝쿨채찍',3,40,100,25],['잎날칼',3,60,95,15],['태양광선',3,85,90,10],
-['쪼기',5,35,100,35],['돌풍',5,40,100,25],['날개치기',5,60,100,20],['급강하',5,80,95,10],
-['전기쇼크',4,40,100,30],['방전',4,60,100,15],['번개',4,85,85,10],
-['박치기',0,60,100,20],['할퀴기',0,30,100,35],
-['울음소리',0,0,100,40],['웅크리기',0,0,100,40],['독가루',3,0,85,35],['수면가루',3,0,75,15],['노려보기',0,0,100,30],['전기자석파',4,0,90,20]
+['돌진',0,40,100,35],['불씨',1,40,100,25],['화염구',1,60,95,15],['화염폭풍',1,85,90,10],
+['물줄기',2,40,100,25],['물결치기',2,60,95,15],['해일',2,85,90,10],
+['덩굴치기',3,40,100,25],['나뭇잎베기',3,60,95,15],['광합성포',3,85,90,10],
+['콕콕',5,35,100,35],['바람칼',5,40,100,25],['날갯짓',5,60,100,20],['낙하돌격',5,80,95,10],
+['정전기',4,40,100,30],['스파크',4,60,100,15],['낙뢰',4,85,85,10],
+['머리받기',0,60,100,20],['발톱긁기',0,30,100,35],
+['포효',0,0,100,40],['움츠리기',0,0,100,40],['독안개',3,0,85,35],['졸음안개',3,0,75,15],['매서운눈',0,0,100,30],['마비전파',4,0,90,20]
 ];
 MV[1][5]=['s',4,10];MV[2][5]=['s',4,15];MV[3][5]=['s',4,20];MV[14][5]=['s',2,30];MV[15][5]=['s',2,30];MV[16][5]=['s',2,30];
 MV[19][5]=['fa',-1];MV[20][5]=['ud',1];MV[21][5]=['s',1,100];MV[22][5]=['s',3,100];MV[23][5]=['fd',-1];MV[24][5]=['s',2,100];
 const STN=['','독','마비','수면','화상'],STC=['','#a040c0','#d8b000','#8890a0','#e86030'];
-const DEXD=[['꼬리의 불꽃은 기분에','따라 크기가 변한다.','화나면 활활 타오른다.'],['불꽃이 한층 거세졌다.','뜨거운 숨결로 풀을','순식간에 태워 버린다.'],['등껍질에 숨어 물을','뿜어 공격한다.','물가에서 자주 보인다.'],['단단한 껍질로 몸을','지키며 강력한 물줄기를','쏜다.'],['등의 싹은 햇빛을','받으며 쑥쑥 자란다.','온순한 성격이다.'],['등의 꽃에서 향기가','나 마음을 진정시킨다.','숲을 지키는 몬스터.'],['작지만 용감한 새.','하늘 높이 날고','싶어 한다.'],['날카로운 눈으로','먼 곳의 먹이도','놓치지 않는다.'],['볼 주머니에 전기를','모아 둔다.','화나면 찌릿 방전한다.'],['푹신한 털로 덮여','있어 안으면 따뜻하다.','겁이 많은 성격.']];
-const STG=['발버둥',0,50,100,1];
-const TN=['노말','불꽃','물','풀','전기','비행'];
+const DEXD=[['꼬리의 불꽃은 기분에','따라 크기가 변한다.','화나면 활활 타오른다.'],['불꽃이 한층 거세졌다.','뜨거운 숨결로 풀을','순식간에 태워 버린다.'],['등껍질에 숨어 물을','뿜어 공격한다.','물가에서 자주 보인다.'],['단단한 껍질로 몸을','지키며 강력한 물줄기를','쏜다.'],['등의 싹은 햇빛을','받으며 쑥쑥 자란다.','온순한 성격이다.'],['등의 꽃에서 향기가','나 마음을 진정시킨다.','숲을 지키는 몬스터.'],['작지만 용감한 새.','하늘 높이 날고','싶어 한다.'],['날카로운 눈으로','먼 곳의 먹이도','놓치지 않는다.'],['볼 주머니에 전기를','모아 둔다.','화나면 찌릿 전기를 쏜다.'],['푹신한 털로 덮여','있어 안으면 따뜻하다.','겁이 많은 성격.']];
+const STG=['안간힘',0,50,100,1];
+const TN=['일반','불꽃','물','풀','전기','비행'];
 const TC=['#888','#e86030','#3880e8','#38a838','#d8b000','#7890e0'];
 const EF=[[1,1,1,1,1,1],[1,.5,.5,2,1,1],[1,2,.5,.5,1,1],[1,.5,2,.5,1,.5],[1,1,2,.5,.5,2],[1,1,1,2,.5,1]];
-const ITEMS=[{n:'상처약',h:30,price:100},{n:'좋은상처약',h:80,price:250},{n:'몬스터볼',h:0,price:60}];
+const ITEMS=[{n:'회복약',h:30,price:100},{n:'고급회복약',h:80,price:250},{n:'몬스터볼',h:0,price:60}];
 const STR=[0,2,4],RIV={0:2,2:4,4:0};
 
 function mkSpr(sp){
@@ -349,37 +360,37 @@ m.warps.push({x:6,y:1,to:'home2',tx:6,ty:2,d:0},{x:3,y:6,to:'town',tx:6,ty:16,d:
 m.npcs.push(npc('mom',4,4,0,'mom',{fn:talkMom}));
 w.home=m;
 
-m=mapNew(28,22,GRS,'town');m.ttl='새싹마을';
+m=mapNew(28,22,GRS,'town');m.ttl='아침마을';
 R(m,0,0,28,2,TRE);R(m,0,0,2,22,TRE);R(m,26,0,2,22,TRE);R(m,0,20,28,2,TRE);
 bld(m,3,3,5,ROR,2);bld(m,18,3,5,ROG,2);bld(m,4,12,5,ROB,2);bld(m,17,12,7,ROR,3);
 R(m,13,0,2,19,GRD);R(m,5,9,17,2,GRD);R(m,5,7,1,2,GRD);R(m,20,7,1,2,GRD);R(m,6,17,16,2,GRD);R(m,6,16,1,1,GRD);R(m,20,16,1,1,GRD);
 R(m,23,17,3,3,WAT);R(m,10,12,2,2,TRE);R(m,9,4,2,2,TRE);R(m,24,10,2,3,TRE);R(m,16,5,1,2,TRE);
 sprinkle(m);
-S1(m,7,8,SGN);m.signs['7,8']='새싹마을\n새로운 시작의 바람이 부는 곳';
-S1(m,3,7,SGN);m.signs['3,7']='몬스터 센터\n몬스터를 무료로 쉬게 해 드립니다';
-S1(m,23,7,SGN);m.signs['23,7']='새싹마을 상점\n상처약·몬스터볼 판매';
-S1(m,23,16,SGN);m.signs['23,16']='이박사 몬스터 연구소';
+S1(m,7,8,SGN);m.signs['7,8']='아침마을\n새로운 시작의 바람이 부는 곳';
+S1(m,3,7,SGN);m.signs['3,7']='치유소\n몬스터를 무료로 쉬게 해 드립니다';
+S1(m,23,7,SGN);m.signs['23,7']='아침마을 상점\n회복약·몬스터볼 판매';
+S1(m,23,16,SGN);m.signs['23,16']='오박사 몬스터 연구소';
 S1(m,3,16,SGN);m.signs['3,16']='내 집';
 m.warps.push({x:5,y:6,to:'tcenter',tx:3,ty:4,d:1,rs:{m:'town',x:5,y:7,d:0}},{x:20,y:6,to:'tmart',tx:3,ty:4,d:1},
 {x:6,y:15,to:'home',tx:4,ty:5,d:1},{x:20,y:15,to:'lab',tx:4,ty:6,d:1},
-{x:13,y:0,to:'route',tx:9,ty:54,d:1,need:'starter',msg:'앗, 잠깐! 이박사님께 먼저 몬스터를 받아야 해!'},
-{x:14,y:0,to:'route',tx:10,ty:54,d:1,need:'starter',msg:'앗, 잠깐! 이박사님께 먼저 몬스터를 받아야 해!'});
-lbl(m,5,6,'센터',1);lbl(m,20,6,'상점',2);lbl(m,6,15,'내 집',0);lbl(m,20,15,'연구소',0);
+{x:13,y:0,to:'route',tx:9,ty:54,d:1,need:'starter',msg:'앗, 잠깐! 오박사님께 먼저 몬스터를 받아야 해!'},
+{x:14,y:0,to:'route',tx:10,ty:54,d:1,need:'starter',msg:'앗, 잠깐! 오박사님께 먼저 몬스터를 받아야 해!'});
+lbl(m,5,6,'치유소',1);lbl(m,20,6,'상점',2);lbl(m,6,15,'내 집',0);lbl(m,20,15,'연구소',0);
 m.npcs.push(npc('rivalT',6,17,1,'rival',{fixed:true,fn:talkRivalIdle}));
-m.npcs.push(npc('t_girl',9,13,0,'girl',{wander:2,msg:['풀숲에는 야생 몬스터가 살고 있어!','몬스터가 다치면 상처약을 쓰거나 센터에서 쉬게 하자.']}));
-m.npcs.push(npc('t_boy',16,12,2,'boy',{wander:1,msg:['이박사님은 정말 대단해!','나도 커서 몬스터 박사가 될 거야!']}));
-m.npcs.push(npc('t_old',9,19,0,'old',{wander:2,msg:['마을 동쪽 상점에서 상처약과 몬스터볼을 팔아.','볼은 야생 몬스터의 체력이 줄었을 때 던지면 잘 잡힌단다.']}));
-m.npcs.push(npc('t_girl2',22,10,2,'girl',{wander:2,msg:['북쪽 길로 가면 청록시가 나와.','가기 전에 몬스터를 조금 키워 두는 게 좋아!']}));
+m.npcs.push(npc('t_girl',9,13,0,'girl',{wander:2,msg:['풀숲에는 야생 몬스터가 살고 있어!','몬스터가 다치면 회복약을 쓰거나 치유소에서 쉬게 하자.']}));
+m.npcs.push(npc('t_boy',16,12,2,'boy',{wander:1,msg:['오박사님은 정말 대단해!','나도 커서 몬스터 박사가 될 거야!']}));
+m.npcs.push(npc('t_old',9,19,0,'old',{wander:2,msg:['마을 동쪽 상점에서 회복약과 몬스터볼을 팔아.','볼은 야생 몬스터의 체력이 줄었을 때 던지면 잘 잡힌단다.']}));
+m.npcs.push(npc('t_girl2',22,10,2,'girl',{wander:2,msg:['북쪽 길로 가면 솔바람시가 나와.','가기 전에 몬스터를 조금 키워 두는 게 좋아!']}));
 w.town=m;
 
 m=mapNew(9,8,FLR,'lab');room(m);
 R(m,1,1,7,1,BKS);R(m,3,2,3,1,TBL);S1(m,1,2,PLT);S1(m,7,2,PLT);S1(m,4,7,MAT);
-m.warps.push({x:4,y:7,to:'town',tx:20,ty:16,d:0,need:'starter',msg:'이박사: 기다리게! 먼저 몬스터를 골라야지!'});
+m.warps.push({x:4,y:7,to:'town',tx:20,ty:16,d:0,need:'starter',msg:'오박사: 기다리게! 먼저 몬스터를 골라야지!'});
 m.npcs.push(npc('prof',4,4,0,'prof',{fn:talkProf}));
 m.npcs.push(npc('rival1',6,3,0,'rival',{fn:talkRivalIdle}));
 w.lab=m;
 
-m=mapNew(20,56,GRS,'route');m.enc=true;m.ttl='1번 도로';
+m=mapNew(20,56,GRS,'route');m.enc=true;m.ttl='들판길';
 R(m,0,0,3,56,TRE);R(m,17,0,3,56,TRE);R(m,3,0,14,2,TRE);R(m,3,54,14,2,TRE);
 R(m,3,43,14,3,TRE);R(m,3,27,14,3,TRE);R(m,3,14,14,3,TRE);
 R(m,3,47,5,7,GRT);R(m,12,47,5,7,GRT);R(m,3,38,5,4,GRT);R(m,12,38,5,5,GRT);R(m,8,31,8,5,GRT);R(m,3,31,2,5,GRT);
@@ -389,39 +400,39 @@ R(m,9,36,2,8,GRD);R(m,5,36,6,2,GRD);R(m,5,30,2,7,GRD);R(m,5,27,3,3,GRD);
 R(m,5,23,2,4,GRD);R(m,5,22,10,2,GRD);R(m,13,14,2,9,GRD);R(m,12,14,1,3,GRS);
 R(m,13,8,2,6,GRD);R(m,9,8,6,2,GRD);R(m,9,2,2,8,GRD);R(m,9,0,2,2,GRD);
 sprinkle(m);
-S1(m,11,52,SGN);m.signs['11,52']='← 새싹마을\n청록시 →\n(풀숲에서 몬스터를 만나요)';
+S1(m,11,52,SGN);m.signs['11,52']='← 아침마을\n솔바람시 →\n(풀숲에서 몬스터를 만나요)';
 S1(m,11,41,SGN);m.signs['11,41']='이 앞에 트레이너가 있어요.\n준비는 되셨나요?';
-S1(m,11,12,SGN);m.signs['11,12']='청록시까지 조금만 더!';
+S1(m,11,12,SGN);m.signs['11,12']='솔바람시까지 조금만 더!';
 itm(m,4,50,0,1);itm(m,15,49,2,2);itm(m,14,40,0,2);itm(m,4,33,1,1);itm(m,13,33,2,2);itm(m,8,20,0,1);itm(m,15,25,2,2);itm(m,5,12,1,1);itm(m,14,3,0,2);
 m.warps.push({x:9,y:55,to:'town',tx:13,ty:1,d:0},{x:10,y:55,to:'town',tx:14,ty:1,d:0},{x:9,y:0,to:'city',tx:10,ty:18,d:1},{x:10,y:0,to:'city',tx:11,ty:18,d:1});
-m.npcs.push(npc('tr1',8,44,3,'boy',{tr:{view:3,name:'소년 민호',party:[[9,3]],rw:150,pre:'소년 민호: 눈이 마주쳤으니 승부다!',lose:'소년 민호: 으아~ 내 몬스터가 지다니!',post:'소년 민호: 너 강하구나! 청록시까지 힘내!'}}));
-m.npcs.push(npc('tr2',7,28,2,'girl',{tr:{view:3,name:'소녀 하나',party:[[8,4]],rw:180,pre:'소녀 하나: 내 귀여운 몬스터를 보여 줄게!',lose:'소녀 하나: 어머, 내가 졌네...',post:'소녀 하나: 이 앞이 청록시 가는 길이야. 힘내!'}}));
-m.npcs.push(npc('tr3',12,15,3,'boy',{tr:{view:3,name:'소년 철수',party:[[6,3],[9,4]],rw:220,pre:'소년 철수: 여기서부터는 나를 이겨야 지나갈 수 있어!',lose:'소년 철수: 와, 진짜 세다!',post:'소년 철수: 청록시 체육관에 도전해 봐!'}}));
+m.npcs.push(npc('tr1',8,44,3,'boy',{tr:{view:3,name:'소년 민호',party:[[9,3]],rw:150,pre:'소년 민호: 눈이 마주쳤으니 승부다!',lose:'소년 민호: 으아~ 내 몬스터가 지다니!',post:'소년 민호: 너 강하구나! 솔바람시까지 힘내!'}}));
+m.npcs.push(npc('tr2',7,28,2,'girl',{tr:{view:3,name:'소녀 하나',party:[[8,4]],rw:180,pre:'소녀 하나: 내 귀여운 몬스터를 보여 줄게!',lose:'소녀 하나: 어머, 내가 졌네...',post:'소녀 하나: 이 앞이 솔바람시 가는 길이야. 힘내!'}}));
+m.npcs.push(npc('tr3',12,15,3,'boy',{tr:{view:3,name:'소년 철수',party:[[6,3],[9,4]],rw:220,pre:'소년 철수: 여기서부터는 나를 이겨야 지나갈 수 있어!',lose:'소년 철수: 와, 진짜 세다!',post:'소년 철수: 솔바람시 도장에 도전해 봐!'}}));
 m.npcs.push(npc('rival2',9,3,0,'rival',{fn:talkRivalIdle}));
 m.trig.push({x:3,y:6,w:14,h:1,f:'rival2',need:'starter',fn:rival2});
 w.route=m;
 
-m=mapNew(24,20,GRS,'city');m.ttl='청록시';
+m=mapNew(24,20,GRS,'city');m.ttl='솔바람시';
 R(m,0,0,24,2,TRE);R(m,0,0,2,20,TRE);R(m,22,0,2,20,TRE);R(m,0,18,24,2,TRE);
 bld(m,2,3,5,ROR,2);bld(m,8,3,5,ROB,2);bld(m,13,3,7,ROG,2);
 bld(m,2,12,5,ROR,2);S1(m,4,15,WAL);bld(m,14,12,4,ROB,1);S1(m,15,15,WAL);
 R(m,4,7,1,3,GRD);R(m,10,7,1,3,GRD);R(m,15,7,1,3,GRD);R(m,3,9,18,2,GRD);R(m,10,9,2,9,GRD);R(m,10,18,2,2,GRD);
 R(m,19,13,3,4,WAT);R(m,7,13,2,2,TRE);R(m,20,6,2,3,TRE);
 sprinkle(m);
-S1(m,13,7,SGN);m.signs['13,7']='청록시 체육관\n관장: 하늘\n(하늘을 나는 새의 달인)';
-S1(m,2,7,SGN);m.signs['2,7']='몬스터 센터';
-S1(m,8,7,SGN);m.signs['8,7']='청록시 상점';
-S1(m,12,17,SGN);m.signs['12,17']='청록시\n하늘 높이 날아오르는 도시';
-lbl(m,4,6,'센터',1);lbl(m,10,6,'상점',2);lbl(m,15,6,'체육관',0);
+S1(m,13,7,SGN);m.signs['13,7']='솔바람시 도장\n도장주: 하람\n(하늘을 나는 새의 달인)';
+S1(m,2,7,SGN);m.signs['2,7']='치유소';
+S1(m,8,7,SGN);m.signs['8,7']='솔바람시 상점';
+S1(m,12,17,SGN);m.signs['12,17']='솔바람시\n하늘 높이 날아오르는 도시';
+lbl(m,4,6,'치유소',1);lbl(m,10,6,'상점',2);lbl(m,15,6,'도장',0);
 m.warps.push({x:4,y:6,to:'center',tx:3,ty:4,d:1,rs:{m:'city',x:4,y:7,d:0}},{x:10,y:6,to:'mart',tx:3,ty:4,d:1},{x:15,y:6,to:'gym',tx:5,ty:14,d:1},
 {x:10,y:19,to:'route',tx:9,ty:1,d:0},{x:11,y:19,to:'route',tx:10,ty:1,d:0});
-m.npcs.push(npc('c_old',8,12,0,'old',{wander:2,msg:['관장 하늘은 새 몬스터를 쓴대.','비행 타입은 풀 타입에 강하지만 전기 타입에는 약하지!','풀숲에서 전기 몬스터를 찾아보는 게 어때?']}));
-m.npcs.push(npc('c_girl',13,13,2,'girl',{wander:2,msg:['몬스터 센터에서는 몬스터를 무료로 쉬게 해 줘!','상점에서는 상처약과 몬스터볼을 팔아.']}));
-m.npcs.push(npc('c_boy1',8,16,0,'boy',{wander:2,msg:['체육관에는 도전자가 3명 있어.','그 3명을 다 이겨야 관장 하늘과 싸울 수 있대!']}));
+m.npcs.push(npc('c_old',8,12,0,'old',{wander:2,msg:['도장주 하람은 새 몬스터를 쓴대.','비행 타입은 풀 타입에 강하지만 전기 타입에는 약하지!','풀숲에서 전기 몬스터를 찾아보는 게 어때?']}));
+m.npcs.push(npc('c_girl',13,13,2,'girl',{wander:2,msg:['치유소에서는 몬스터를 무료로 쉬게 해 줘!','상점에서는 회복약과 몬스터볼을 팔아.']}));
+m.npcs.push(npc('c_boy1',8,16,0,'boy',{wander:2,msg:['도장에는 도전자가 3명 있어.','그 3명을 다 이겨야 도장주 하람과 싸울 수 있대!']}));
 m.npcs.push(npc('c_girl2',17,16,2,'girl',{wander:2,msg:['저 호수에는 물 몬스터가 산대.','나도 언젠가 잡아 볼 거야!']}));
-m.npcs.push(npc('c_old2',13,16,0,'old',{wander:1,msg:['체육관 안에도 몬스터 센터 직원이 있단다.','지치면 쉬었다가 도전하렴.']}));
+m.npcs.push(npc('c_old2',13,16,0,'old',{wander:1,msg:['도장 안에도 치유소 직원이 있단다.','지치면 쉬었다가 도전하렴.']}));
 m.npcs.push(npc('c_mom',17,10,0,'mom',{fixed:true,fn:talkCityMom}));
-m.npcs.push(npc('c_boy2',19,8,2,'boy',{wander:1,msg:['체육관 앞이야! 심호흡하고 들어가 봐.','처음엔 도전자들부터 차례로 이겨야 해!']}));
+m.npcs.push(npc('c_boy2',19,8,2,'boy',{wander:1,msg:['도장 앞이야! 심호흡하고 들어가 봐.','처음엔 도전자들부터 차례로 이겨야 해!']}));
 w.city=m;
 
 w.center=mkIn('center','center','city',4,7);
@@ -436,9 +447,9 @@ S1(m,2,2,STT);S1(m,8,2,STT);S1(m,1,1,PLT);S1(m,9,1,PLT);S1(m,1,6,PLT);S1(m,9,7,P
 S1(m,5,15,MAT);
 m.warps.push({x:5,y:15,to:'city',tx:15,ty:7,d:0});
 m.npcs.push(npc('leader',5,2,0,'leader',{fn:talkLeader,fixed:true}));
-m.npcs.push(npc('gt1',4,11,3,'boy',{tr:{view:3,name:'관원 태식',party:[[6,5]],rw:200,pre:'관원 태식: 관장님께 가려면 우리 셋을 먼저 쓰러뜨려야 한다!',lose:'관원 태식: 크윽... 다음 도전자를 만나 보세요!',post:'관원 태식: 위쪽에 두 명이 더 있어요. 조심하세요!'}}));
-m.npcs.push(npc('gt2',6,8,2,'girl',{tr:{view:3,name:'관원 나리',party:[[9,5]],rw:220,pre:'관원 나리: 여기부터는 내가 상대할게!',lose:'관원 나리: 훌륭해요! 다음으로 가세요.',post:'관원 나리: 이제 한 명 남았어요!'}}));
-m.npcs.push(npc('gt3',4,5,3,'boy',{tr:{view:3,name:'관원 도현',party:[[8,6]],rw:250,pre:'관원 도현: 마지막 관문은 나다! 덤벼라!',lose:'관원 도현: 졌다... 관장님께 가 보세요!',post:'관원 도현: 이제 관장님이 기다리고 계세요!'}}));
+m.npcs.push(npc('gt1',4,11,3,'boy',{tr:{view:3,name:'문하생 태식',party:[[6,5]],rw:200,pre:'문하생 태식: 도장주님께 가려면 우리 셋을 먼저 쓰러뜨려야 한다!',lose:'문하생 태식: 크윽... 다음 도전자를 만나 보세요!',post:'문하생 태식: 위쪽에 두 명이 더 있어요. 조심하세요!'}}));
+m.npcs.push(npc('gt2',6,8,2,'girl',{tr:{view:3,name:'문하생 나리',party:[[9,5]],rw:220,pre:'문하생 나리: 여기부터는 내가 상대할게!',lose:'문하생 나리: 훌륭해요! 다음으로 가세요.',post:'문하생 나리: 이제 한 명 남았어요!'}}));
+m.npcs.push(npc('gt3',4,5,3,'boy',{tr:{view:3,name:'문하생 도현',party:[[8,6]],rw:250,pre:'문하생 도현: 마지막 관문은 나다! 덤벼라!',lose:'문하생 도현: 졌다... 도장주님께 가 보세요!',post:'문하생 도현: 이제 도장주님이 기다리고 계세요!'}}));
 m.npcs.push(npc('gnurse',8,13,2,'nurse',{fn:talkNurse,fixed:true}));
 w.gym=m;
 return w}
@@ -457,11 +468,11 @@ G.flags.momIntro=true;
 const mom=npcById(cur,'mom');
 yield* notice(mom);
 yield* approach(mom);
-yield* say('엄마: '+PN+', 이제 일어났니? 이박사님이 아까부터 너를 찾으셨단다.');
+yield* say('엄마: '+PN+', 이제 일어났니? 오박사님이 아까부터 너를 찾으셨단다.');
 yield* say('엄마: 연구소는 마을 오른쪽 위에 있어. 용돈도 챙겨 가렴!');
 G.money=300;sfx('ok');
 yield* say(eunn(PN)+' 용돈 300원을 받았다!');
-yield* say('엄마: 다녀오렴. 마을 밖으로 나가기 전에 이박사님께 꼭 들르고!')}
+yield* say('엄마: 다녀오렴. 마을 밖으로 나가기 전에 오박사님께 꼭 들르고!')}
 function* townMeet(){
 if(G.flags.guided)return;
 G.flags.guided=true;
@@ -469,7 +480,7 @@ const rv=npcById(cur,'rivalT');
 rv.d=1;
 yield* notice(rv);
 yield* say(RN+': 야! 왜 이렇게 늦게 나와!');
-yield* say(RN+': 이박사님이 우리 둘을 부르셨어. 연구소로 가자! 따라와!');
+yield* say(RN+': 오박사님이 우리 둘을 부르셨어. 연구소로 가자! 따라와!');
 const path=[];
 for(let i=0;i<14;i++)path.push(3);
 path.push(1,1);
@@ -478,8 +489,8 @@ rv.vis=false;
 yield* fade(1,8);
 enterMap('lab',4,6,1);
 yield* fade(0,8);
-yield* say(RN+': 이박사님! '+PN+' 데려왔어요!');
-yield* say('이박사: 오, 왔구나! 이리 와 보게.')}
+yield* say(RN+': 오박사님! '+PN+' 데려왔어요!');
+yield* say('오박사: 오, 왔구나! 이리 와 보게.')}
 
 function npcAt(x,y){for(let i=0;i<cur.npcs.length;i++){const n=cur.npcs[i];if(!n.vis)continue;if(n.x===x&&n.y===y)return n;if(n.mv>0&&n.x+DX[n.sd]===x&&n.y+DY[n.sd]===y)return n}return null}
 function free(x,y){return x>=0&&y>=0&&x<cur.w&&y<cur.h&&!SOL[cur.t[y*cur.w+x]]&&!npcAt(x,y)}
@@ -627,7 +638,7 @@ for(let i=0;i<4;i++){const x=90+(i%2)*44,y=BOXY+7+((i/2)|0)*18;txt(it[i],x,y);if
 box(0,BOXY,W,BOXH);
 for(let i=0;i<pm.mv.length;i++){const x=16+(i%2)*72,y=BOXY+5+((i/2)|0)*15;txt(MV[pm.mv[i]][0],x,y);if(i===b.msel)curs(x-9,y+2)}
 const mv=MV[pm.mv[b.msel]];
-txt(TN[mv[1]]+'  PP '+pm.pp[b.msel]+'/'+mv[4]+'  '+(mv[2]?'위력 '+mv[2]:'변화기'),14,BOXY+33,F7)}}
+txt(TN[mv[1]]+'  횟수 '+pm.pp[b.msel]+'/'+mv[4]+'  '+(mv[2]?'위력 '+mv[2]:'변화기'),14,BOXY+33,F7)}}
 
 function hdr(t,r){ctx.fillStyle='#a05030';ctx.fillRect(-OX,0,VW,15);txt(t,6,2,F9,'#fff');if(r){ctx.textAlign='right';txt(r,154,3,F8,'#ffe9a8');ctx.textAlign='left'}}
 function arL(x,y){ctx.fillStyle='#a05030';ctx.fillRect(x+3,y,1,1);ctx.fillRect(x+2,y+1,2,1);ctx.fillRect(x+1,y+2,3,1);ctx.fillRect(x,y+3,4,1);ctx.fillRect(x+1,y+4,3,1);ctx.fillRect(x+2,y+5,2,1);ctx.fillRect(x+3,y+6,1,1)}
@@ -679,7 +690,7 @@ txt('공격 '+m.at,68,55,F8);txt('방어 '+m.df,112,55,F8);txt('속도 '+m.sd,68
 txt('EXP',6,74,F8);ctx.fillStyle='#303038';ctx.fillRect(28,75,126,5);ctx.fillStyle='#d0d0d0';ctx.fillRect(29,76,124,3);ctx.fillStyle='#40a0f0';ctx.fillRect(29,76,Math.round(124*Math.min(1,m.x/need(m.l))),3);
 txt('다음 레벨까지 '+(need(m.l)-m.x),28,81,F8,'#686868');
 box(4,93,152,47);
-for(let i=0;i<m.mv.length;i++){const mv=MV[m.mv[i]],x=10+(i%2)*74,y=97+((i/2)|0)*21;txt(mv[0],x,y,F9,TC[mv[1]]);txt((mv[2]?'위력 '+mv[2]:'변화')+' PP '+m.pp[i]+'/'+mv[4],x,y+12,F7,'#505050')}
+for(let i=0;i<m.mv.length;i++){const mv=MV[m.mv[i]],x=10+(i%2)*74,y=97+((i/2)|0)*21;txt(mv[0],x,y,F9,TC[mv[1]]);txt((mv[2]?'위력 '+mv[2]:'변화')+' 횟수 '+m.pp[i]+'/'+mv[4],x,y+12,F7,'#505050')}
 }else if(s.t==='starter'){
 hdr('파트너 몬스터를 고르세요');
 for(let i=0;i<3;i++){
@@ -811,13 +822,13 @@ ctx.fillStyle='#58b848';ctx.fillRect(-OX,92,VW,52);ctx.fillStyle='#489838';ctx.f
 ctx.fillStyle='#3c8830';for(let x=-OX;x<VW-OX;x+=12){ctx.fillRect(x+((x>>2)&3),100+((x>>3)&7)*5,3,2)}
 ctx.textAlign='center';
 otxt('미니 몬스터',80,16,F20,'#ffe060','#7a3a10');
-otxt('골드',80,40,F20,'#ffffff','#2a4a9a');
+otxt('어드벤처',80,40,F20,'#ffffff','#2a4a9a');
 ctx.textAlign='left';
 const bob=Math.sin(fr/12)*2;
 ctx.drawImage(MS[0],12,62+bob,48,48);ctx.drawImage(MS[2],56,66-bob,48,48);ctx.drawImage(MS[4],100,62+bob,48,48);
 ctx.textAlign='center';
 if((fr>>5)&1)otxt('아무 버튼이나 눌러 시작',80,122,F9,'#ffffff','#203060');
-txt('© 미니 몬스터 골드',80,135,F7,'#e0ffe0');
+txt('© 미니 몬스터 어드벤처',80,135,F7,'#e0ffe0');
 ctx.textAlign='left'}
 function drawEvo(){
 const e=ui.evo;ctx.fillStyle='#000';ctx.fillRect(-OX,0,VW,H);
@@ -830,7 +841,7 @@ function drawEnding(){
 for(let i=0;i<9;i++){ctx.fillStyle=['#14204a','#1c2c5c','#24386e','#2c4480','#345092','#3c5ca4','#4468b6','#4c74c8','#5480da'][i];ctx.fillRect(-OX,i*16,VW,16)}
 ctx.textAlign='center';
 txt('축하합니다!',80,8,F20,'#ffe060');
-txt('청록시 체육관을 클리어했습니다',80,34,F8,'#fff');
+txt('솔바람시 도장을 클리어했습니다',80,34,F8,'#fff');
 txt('플레이 시간 '+fmtT(G.t),80,46,F8,'#fff');
 const n=G.party.length;
 for(let i=0;i<n;i++){const x=80-n*20+i*40;ctx.drawImage(MS[G.party[i].s],x,62,36,36);txt('Lv'+G.party[i].l,x+18,100,F7,'#fff')}
@@ -1095,7 +1106,7 @@ const d=P.dir,n=pm.mv.length;let s=B.msel;
 if(d===0)s+=2;else if(d===1)s-=2;else if(d===2)s-=1;else if(d===3)s+=1;
 if(d>=0&&s>=0&&s<n&&s!==B.msel){B.msel=s;sfx('sel')}
 if(P.a){
-if(pm.pp[B.msel]<=0){B.mode='text';yield* say('남은 PP가 없다!',24);B.mode='moves';continue}
+if(pm.pp[B.msel]<=0){B.mode='text';yield* say('남은 횟수가 없다!',24);B.mode='moves';continue}
 sfx('ok');return B.msel}
 if(P.b)return -1}}
 function* pickAct(){
@@ -1396,13 +1407,13 @@ function* talkMom(){
 yield* say('엄마: '+PN+', 몸조심하고 다녀오렴!');
 if(G.flags.starter){healAll();sfx('heal');yield* say('엄마: 푹 쉬었다 가렴. 몬스터들도 모두 건강해졌단다!')}}
 function* talkRivalIdle(){
-if(!G.flags.starter)yield* say(RN+': 이박사님이 한 마리 고르라고 하셨는데... 너 먼저 골라!');
+if(!G.flags.starter)yield* say(RN+': 오박사님이 한 마리 고르라고 하셨는데... 너 먼저 골라!');
 else yield* say(RN+': 흥, 두고 보자!')}
 function* talkProf(){
-if(G.flags.starter){yield* say('이박사: 모험은 잘 되어 가나? 청록시 체육관의 관장 하늘에게 도전해 보게!');return}
-yield* say('이박사: 오오, '+PN+'! 기다리고 있었다.');
-yield* say('이박사: 이 세계에는 몬스터라는 신비한 생명체가 살고 있지.');
-yield* say('이박사: 여기 세 마리 중에서 한 마리를 파트너로 골라 보거라.');
+if(G.flags.starter){yield* say('오박사: 모험은 잘 되어 가나? 솔바람시 도장의 도장주 하람에게 도전해 보게!');return}
+yield* say('오박사: 오오, '+PN+'! 기다리고 있었다.');
+yield* say('오박사: 이 세계에는 몬스터라는 신비한 생명체가 살고 있지.');
+yield* say('오박사: 여기 세 마리 중에서 한 마리를 파트너로 골라 보거라.');
 let pick=0;
 for(;;){
 pick=yield* pickStarter();
@@ -1412,8 +1423,8 @@ const sid=STR[pick];
 G.party.push(mkMon(sid,5));dexC(G.party[0]);G.rs=RIV[sid];G.bag=[5,0,8];
 sfx('lv');
 yield* say(eunn(PN)+' '+eul(SP[sid].n)+' 손에 넣었다!');
-yield* say('이박사: 상처약 5개와 몬스터볼 8개도 가져가게.');
-yield* say('이박사: 야생 몬스터는 약하게 만든 뒤 몬스터볼로 잡을 수 있다네!');
+yield* say('오박사: 회복약 5개와 몬스터볼 8개도 가져가게.');
+yield* say('오박사: 야생 몬스터는 약하게 만든 뒤 몬스터볼로 잡을 수 있다네!');
 G.flags.starter=true;
 const rv=cur.npcs[1];
 rv.d=3;
@@ -1424,10 +1435,10 @@ yield* say(RN+': '+PN+', 한 판 붙자!');
 const r=yield* fight([mkMon(G.rs,3)],{name:RN,ch:'rival',rw:100,safe:true,lose:RN+': 으윽... 다음엔 지지 않겠어!'});
 G.flags.rival1=true;rv.vis=false;
 if(r==='lose')return;
-yield* say('이박사: 좋은 승부였네! 몬스터들이 지쳤을 테니 치료해 주겠네.');
+yield* say('오박사: 좋은 승부였네! 몬스터들이 지쳤을 테니 치료해 주겠네.');
 yield* healScene();
-yield* say('이박사: 마을 북쪽 길을 따라가면 청록시가 나온다네.');
-yield* say('이박사: 풀숲에서 몬스터를 더 잡아 키워 보게!')}
+yield* say('오박사: 마을 북쪽 길을 따라가면 솔바람시가 나온다네.');
+yield* say('오박사: 풀숲에서 몬스터를 더 잡아 키워 보게!')}
 function* rival2(){
 G.flags.rival2=true;
 const rv=cur.npcs[cur.npcs.length-1];
@@ -1435,7 +1446,7 @@ yield* notice(rv);
 yield* approach(rv);
 yield* say(RN+': 어이, '+PN+'! 또 만났네!');
 yield* say(RN+': 내 몬스터도 한층 강해졌다고!');
-const r=yield* fight([mkMon(G.rs,6)],{name:RN,ch:'rival',rw:300,lose:RN+': 큭... 관장 하늘은 만만치 않을 거야. 조심해!'});
+const r=yield* fight([mkMon(G.rs,6)],{name:RN,ch:'rival',rw:300,lose:RN+': 큭... 도장주 하람은 만만치 않을 거야. 조심해!'});
 rv.vis=false;
 if(r==='lose')return}
 function itm(m,x,y,i,n){(m.items||(m.items=[])).push({x,y,i,n,k:'it_'+m.k+x+'_'+y})}
@@ -1462,7 +1473,7 @@ let alive=0;for(let j=0;j<G.party.length;j++)if(j!==k&&G.party[j].hp>0)alive++;
 if(!alive){yield* say('싸울 수 있는 몬스터가 없어지면 안 돼요!');continue}
 const m=G.party.splice(k,1)[0];G.box.push(m);sfx('ok');yield* say(eunn(nm(m))+' 보관함으로 갔다.',26)}}}}
 function* talkNurse(){
-yield* say('몬스터 센터에 어서 오세요!');
+yield* say('치유소에 어서 오세요!');
 for(;;){
 yield* say('무엇을 도와 드릴까요?',0,true);
 const i=yield* menu(['몬스터 회복','보관함','나가기'],86,BOXY-54,72,1,true,0);
@@ -1476,7 +1487,7 @@ else if(i===1)yield* boxScreen();
 else break}
 yield* say('또 오세요!')}
 function* talkClerk(){
-yield* say('어서 오세요! 상처약과 몬스터볼을 팔고 있어요.');
+yield* say('어서 오세요! 회복약과 몬스터볼을 팔고 있어요.');
 yield* shopScreen();
 yield* say('또 오세요!')}
 function* talkCityMom(){
@@ -1484,24 +1495,24 @@ if(G.flags.cityGift){yield* say('아주머니: 모험 잘하고 있니? 몸조�
 G.flags.cityGift=true;
 yield* say('아주머니: 어머, 모험가구나! 이거 가져가렴.');
 G.bag[0]+=3;sfx('ok');
-yield* say(eunn(PN)+' 상처약 3개를 받았다!')}
+yield* say(eunn(PN)+' 회복약 3개를 받았다!')}
 function* talkLeader(n){
-if(!G.flags.leader&&!(G.flags.d_gt1&&G.flags.d_gt2&&G.flags.d_gt3)){yield* say('하늘: 도전자 세 명을 먼저 쓰러뜨리고 오렴!');return}
-if(G.flags.leader){yield* say('하늘: 훌륭한 트레이너야! 앞으로도 멋진 모험을 이어 가렴!');return}
-yield* say('하늘: 잘 왔다! 나는 청록시 체육관 관장 하늘!');
-yield* say('하늘: 하늘을 가르는 새 몬스터들의 힘을 보여 주마!');
-const r=yield* fight([mkMon(6,7),mkMon(7,9)],{name:'관장 하늘',ch:'leader',rw:500,lose:'하늘: 내가 졌다... 훌륭한 승부였다!'});
+if(!G.flags.leader&&!(G.flags.d_gt1&&G.flags.d_gt2&&G.flags.d_gt3)){yield* say('하람: 도전자 세 명을 먼저 쓰러뜨리고 오렴!');return}
+if(G.flags.leader){yield* say('하람: 훌륭한 트레이너야! 앞으로도 멋진 모험을 이어 가렴!');return}
+yield* say('하람: 잘 왔다! 나는 솔바람시 도장 도장주 하람!');
+yield* say('하람: 하늘을 가르는 새 몬스터들의 힘을 보여 주마!');
+const r=yield* fight([mkMon(6,7),mkMon(7,9)],{name:'도장주 하람',ch:'leader',rw:500,lose:'하람: 내가 졌다... 훌륭한 승부였다!'});
 if(r!=='win')return;
 G.flags.leader=true;
 sfx('lv');
-yield* say('하늘: 승리의 증표로 윙배지를 주마. 받아라!');
-yield* say(eunn(PN)+' 윙배지를 손에 넣었다!');
+yield* say('하람: 승리의 증표로 깃털훈장을 주마. 받아라!');
+yield* say(eunn(PN)+' 깃털훈장을 손에 넣었다!');
 yield* ending()}
 function* ending(){
 yield* fade(1,20);
 mode='ending';
 yield* fade(0,20);
-yield* say('관장 하늘을 쓰러뜨리고 모험을 완수했다!',0);
+yield* say('도장주 하람을 쓰러뜨리고 모험을 완수했다!',0);
 yield* say('플레이해 주셔서 감사합니다! 수고하셨어요!',0);
 const i=yield* menu(['계속 탐험하기','처음부터 다시 시작'],24,100,112,1,false,0);
 yield* fade(1,16);
