@@ -1341,6 +1341,7 @@ sfx('step');
 yield* fade(1,8);
 if(w.rs)G.respawn=w.rs;
 enterMap(w.to,w.tx,w.ty,w.d);
+if(G.flags.starter&&!w.after)saveGame();
 yield* fade(0,8);
 if(w.after)yield* w.after()}
 function* notice(n){excl=n;sfx('excl');yield* wait(34);excl=null}
@@ -1692,6 +1693,8 @@ script=loadIn();
 return true}
 function* titleScript(){
 mode='title';fadeA=0;
+const sv0=readSave();
+if(sv0){let ok=false;try{ok=loadGame(sv0)}catch(e){ok=false}if(ok)return}
 for(;;){yield;if(P.s){ac();const r=yield* settings();if(r==='restart')return}if(P.a||P.m){ac();sfx('ok');break}}
 const sv=readSave();
 if(sv){
