@@ -117,7 +117,7 @@ const t=AC.currentTime+.08;
 for(let c=0;c<4;c++){mk.i[c]=0;mk.nt[c]=t}}
 function musUpdate(){
 if(!AC)return;
-const w=S.bgm?(mode==='battle'?(B&&B.tr&&(B.tr.ch==='rival'||B.tr.ch==='leader')?B.tr.ch:'battle'):mode==='prolog'?'intro':'field'):'';
+const w=S.bgm?(mode==='battle'?(B&&B.tr&&(B.tr.ch==='rival'||B.tr.ch==='leader')?B.tr.ch:(B&&B.tr&&(B.tr.ch==='leader2'||B.tr.ch==='boss'||B.tr.ch==='admin'))?'leader':'battle'):mode==='prolog'?'intro':'field'):'';
 if(w!==mk.name)setTrack(w)}
 setInterval(musTick,50);
 
@@ -183,7 +183,12 @@ boy:{hair:'#383838',skin:'#f8c8a0',sh:'#40a860',pa:'#386838',hat:'#40a860'},
 clerk:{hair:'#383838',skin:'#f8c8a0',sh:'#4878d8',pa:'#304880',hat:'#4878d8'},
 nurse:{hair:'#f070a0',skin:'#f8c8a0',sh:'#f8f8f8',pa:'#f8d0e0',hat:'#f8f8f8'},
 leader:{hair:'#684020',skin:'#f8c8a0',sh:'#80b8f0',pa:'#f0f0f0'},
-old:{hair:'#d0d0d0',skin:'#e8b890',sh:'#a07858',pa:'#604830'}
+old:{hair:'#d0d0d0',skin:'#e8b890',sh:'#a07858',pa:'#604830'},
+leader2:{hair:'#2848a0',skin:'#f8c8a0',sh:'#2060c0',pa:'#e8f0f8'},
+master:{hair:'#a0a0a0',skin:'#e8b890',sh:'#702830',pa:'#403030',hat:'#702830'},
+grunt:{hair:'#202028',skin:'#f8c8a0',sh:'#383848',pa:'#202028',hat:'#383848'},
+admin:{hair:'#a040c0',skin:'#f8c8a0',sh:'#503060',pa:'#302040'},
+boss:{hair:'#e8e8e8',skin:'#e8b890',sh:'#181820',pa:'#282830',hat:'#181820'}
 };
 function drawCh(g,p,dd,l1,l2){
 const f=(x,y,w,h,c)=>{g.fillStyle=c;g.fillRect(x,y,w,h)};
@@ -224,7 +229,13 @@ const SP=[
 {n:'푸드덕',t:5,hp:40,at:45,df:40,sd:56,evL:11,evT:7,ls:3,g:'bird',c:['#c89860','#f8e8c8','#f8a820','#9a6838'],e:0},
 {n:'창공매',t:5,hp:63,at:60,df:55,sd:71,evL:0,evT:0,ls:3,g:'bird',c:['#a87840','#f8e8c8','#f8a820','#7a5028'],e:1},
 {n:'번개쥐',t:4,hp:35,at:55,df:35,sd:90,evL:0,evT:0,ls:4,g:'mouse',c:['#f8d838','#f8f0b0','#f04040','#e8b020'],e:0},
-{n:'구름토',t:0,hp:55,at:48,df:50,sd:50,evL:0,evT:0,ls:5,g:'bun',c:['#f8f0e8','#f8c8d0','#f898a8','#d8d0c8'],e:0}
+{n:'구름토',t:0,hp:55,at:48,df:50,sd:50,evL:0,evT:0,ls:5,g:'bun',c:['#f8f0e8','#f8c8d0','#f898a8','#d8d0c8'],e:0},
+{n:'모래굴이',t:6,hp:55,at:58,df:52,sd:35,evL:14,evT:11,ls:6,g:'mole',c:['#b88850','#f0d8a8','#8a5a30','#f088a0'],e:0},
+{n:'땅굴왕',t:6,hp:78,at:80,df:70,sd:46,evL:0,evT:0,ls:6,g:'mole',c:['#a07040','#f0d8a8','#704820','#e07890'],e:1},
+{n:'눈송이',t:7,hp:48,at:50,df:50,sd:48,evL:14,evT:13,ls:7,g:'pen',c:['#d0e8f8','#ffffff','#68a8d8','#f8a830'],e:0},
+{n:'빙하펭',t:7,hp:70,at:68,df:66,sd:62,evL:0,evT:0,ls:7,g:'pen',c:['#a8d0f0','#ffffff','#4888c8','#f8a830'],e:1},
+{n:'뽀글이',t:2,hp:42,at:45,df:42,sd:58,evL:14,evT:15,ls:8,g:'fish',c:['#58c8e8','#e8f8ff','#2890c0','#ffffff'],e:0},
+{n:'큰뽀글',t:2,hp:68,at:66,df:60,sd:72,evL:0,evT:0,ls:8,g:'fish',c:['#3ca8d8','#e8f8ff','#1c70a8','#ffffff'],e:1}
 ];
 const LS=[
 [[1,0],[1,1],[3,19],[5,18],[7,2],[11,3]],
@@ -232,7 +243,10 @@ const LS=[
 [[1,0],[1,7],[3,21],[5,18],[7,8],[9,22],[11,9]],
 [[1,10],[1,11],[4,23],[5,12],[10,13]],
 [[1,0],[1,14],[4,24],[6,15],[11,16]],
-[[1,0],[3,18],[4,20],[5,17]]
+[[1,0],[3,18],[4,20],[5,17]],
+[[1,0],[1,25],[3,19],[5,18],[8,26],[12,27]],
+[[1,0],[1,28],[3,20],[5,18],[8,29],[12,30]],
+[[1,31],[1,0],[3,20],[6,4],[9,32],[13,5]]
 ];
 SP.forEach(s=>{s.ls=LS[s.ls]});
 const MV=[
@@ -242,17 +256,43 @@ const MV=[
 ['콕콕',5,35,100,35],['바람칼',5,40,100,25],['날갯짓',5,60,100,20],['낙하돌격',5,80,95,10],
 ['정전기',4,40,100,30],['스파크',4,60,100,15],['낙뢰',4,85,85,10],
 ['머리받기',0,60,100,20],['발톱긁기',0,30,100,35],
-['포효',0,0,100,40],['움츠리기',0,0,100,40],['독안개',3,0,85,35],['졸음안개',3,0,75,15],['매서운눈',0,0,100,30],['마비전파',4,0,90,20]
+['포효',0,0,100,40],['움츠리기',0,0,100,40],['독안개',3,0,85,35],['졸음안개',3,0,75,15],['매서운눈',0,0,100,30],['마비전파',4,0,90,20],
+['흙뿌리기',6,40,100,25],['진흙폭탄',6,60,95,15],['대지분쇄',6,85,90,10],['얼음조각',7,40,100,25],['눈보라',7,60,95,15],['빙하낙하',7,85,90,10],['물거품',2,35,100,30],['거품광선',2,65,100,15]
 ];
 MV[1][5]=['s',4,10];MV[2][5]=['s',4,15];MV[3][5]=['s',4,20];MV[14][5]=['s',2,30];MV[15][5]=['s',2,30];MV[16][5]=['s',2,30];
 MV[19][5]=['fa',-1];MV[20][5]=['ud',1];MV[21][5]=['s',1,100];MV[22][5]=['s',3,100];MV[23][5]=['fd',-1];MV[24][5]=['s',2,100];
 const STN=['','독','마비','수면','화상'],STC=['','#a040c0','#d8b000','#8890a0','#e86030'];
-const DEXD=[['꼬리의 불꽃은 기분에','따라 크기가 변한다.','화나면 활활 타오른다.'],['불꽃이 한층 거세졌다.','뜨거운 숨결로 풀을','순식간에 태워 버린다.'],['등껍질에 숨어 물을','뿜어 공격한다.','물가에서 자주 보인다.'],['단단한 껍질로 몸을','지키며 강력한 물줄기를','쏜다.'],['등의 싹은 햇빛을','받으며 쑥쑥 자란다.','온순한 성격이다.'],['등의 꽃에서 향기가','나 마음을 진정시킨다.','숲을 지키는 몬스터.'],['작지만 용감한 새.','하늘 높이 날고','싶어 한다.'],['날카로운 눈으로','먼 곳의 먹이도','놓치지 않는다.'],['볼 주머니에 전기를','모아 둔다.','화나면 찌릿 전기를 쏜다.'],['푹신한 털로 덮여','있어 안으면 따뜻하다.','겁이 많은 성격.']];
+const DEXD=[['꼬리의 불꽃은 기분에','따라 크기가 변한다.','화나면 활활 타오른다.'],['불꽃이 한층 거세졌다.','뜨거운 숨결로 풀을','순식간에 태워 버린다.'],['등껍질에 숨어 물을','뿜어 공격한다.','물가에서 자주 보인다.'],['단단한 껍질로 몸을','지키며 강력한 물줄기를','쏜다.'],['등의 싹은 햇빛을','받으며 쑥쑥 자란다.','온순한 성격이다.'],['등의 꽃에서 향기가','나 마음을 진정시킨다.','숲을 지키는 몬스터.'],['작지만 용감한 새.','하늘 높이 날고','싶어 한다.'],['날카로운 눈으로','먼 곳의 먹이도','놓치지 않는다.'],['볼 주머니에 전기를','모아 둔다.','화나면 찌릿 전기를 쏜다.'],['푹신한 털로 덮여','있어 안으면 따뜻하다.','겁이 많은 성격.'],['땅속을 파고 다니며','단단한 흙도 발톱으로','쉽게 가른다.'],['굵은 발톱으로 바위도','부수는 땅의 왕.','땅울림으로 위협한다.'],['차가운 숲에서 온','작은 펭귄. 뒤뚱뒤뚱','걷는 모습이 귀엽다.'],['머리의 얼음 뿔로','눈보라를 일으킨다.','추위에 매우 강하다.'],['호수에서 뽀글뽀글','거품을 내며 헤엄친다.','장난기가 많다.'],['거품을 크게 불어','적을 날려 버린다.','빠른 헤엄이 자랑.']];
 const STG=['안간힘',0,50,100,1];
-const TN=['일반','불꽃','물','풀','전기','비행'];
-const TC=['#888','#e86030','#3880e8','#38a838','#d8b000','#7890e0'];
-const EF=[[1,1,1,1,1,1],[1,.5,.5,2,1,1],[1,2,.5,.5,1,1],[1,.5,2,.5,1,.5],[1,1,2,.5,.5,2],[1,1,1,2,.5,1]];
-const ITEMS=[{n:'회복약',h:30,price:100},{n:'고급회복약',h:80,price:250},{n:'몬스터볼',h:0,price:60}];
+const TN=['일반','불꽃','물','풀','전기','비행','땅','얼음'];
+const TC=['#888','#e86030','#3880e8','#38a838','#d8b000','#7890e0','#b88848','#58b8e0'];
+const EF=[[1,1,1,1,1,1,1,1],[1,.5,.5,2,1,1,1,2],[1,2,.5,.5,1,1,2,1],[1,.5,2,.5,1,.5,2,1],[1,1,2,.5,.5,2,.5,1],[1,1,1,2,.5,1,1,1],[1,2,1,.5,2,.5,1,1],[1,.5,.5,2,1,2,2,.5]];
+const ITEMS=[
+{n:'회복약',h:30,price:100,k:'heal',d:['몬스터 한 마리의 체력을','30 회복시킨다.']},
+{n:'고급회복약',h:80,price:250,k:'heal',d:['체력을 80 회복하고','상태이상도 치료한다.']},
+{n:'몬스터볼',h:0,price:60,k:'ball',d:['야생 몬스터에게 던져 잡는다.','(전투 중에만 사용)']},
+{n:'상태회복약',h:0,price:150,k:'cure',d:['독·마비·수면·화상을','모두 치료한다.']},
+{n:'기력의조각',h:0,price:500,k:'pp',d:['모든 기술의 사용 횟수를','가득 채운다.']},
+{n:'기술머신 화염구',h:0,price:0,k:'tm',mv:2,d:['불꽃 몬스터에게 화염구를','가르친다. (1회용)']},
+{n:'기술머신 물결치기',h:0,price:0,k:'tm',mv:5,d:['물 몬스터에게 물결치기를','가르친다. (1회용)']},
+{n:'기술머신 나뭇잎베기',h:0,price:0,k:'tm',mv:8,d:['풀 몬스터에게 나뭇잎베기를','가르친다. (1회용)']},
+{n:'기술머신 스파크',h:0,price:0,k:'tm',mv:15,d:['전기 몬스터에게 스파크를','가르친다. (1회용)']},
+{n:'기술머신 진흙폭탄',h:0,price:0,k:'tm',mv:26,d:['땅 몬스터에게 진흙폭탄을','가르친다. (1회용)']},
+{n:'기술머신 눈보라',h:0,price:0,k:'tm',mv:29,d:['얼음 몬스터에게 눈보라를','가르친다. (1회용)']}
+];
+function itemOk(m,id){
+const k=ITEMS[id].k;
+if(m.hp<=0)return false;
+if(k==='heal')return m.hp<m.mhp;
+if(k==='cure')return m.st>0;
+if(k==='pp'){for(let i=0;i<m.mv.length;i++)if(m.pp[i]<MV[m.mv[i]][4])return true;return false}
+return false}
+function itemApply(m,id){
+const it=ITEMS[id];
+if(it.k==='heal'){m.hp=Math.min(m.mhp,m.hp+it.h);if(id===1)m.st=0;return '체력을 회복했다!'}
+if(it.k==='cure'){m.st=0;return '상태이상이 나았다!'}
+for(let i=0;i<m.mv.length;i++)m.pp[i]=MV[m.mv[i]][4];
+return '기술의 횟수가 가득 찼다!'}
 const STR=[0,2,4],RIV={0:2,2:4,4:0};
 
 function mkSpr(sp){
@@ -293,6 +333,27 @@ e(12,16,5,5,a);e(12,17,3,3,b);f(8,20,3,3,a);f(14,20,3,3,a);
 e(8,4,2,4,a);e(16,4,2,4,a);f(7,1,2,2,'#202020');f(15,1,2,2,'#202020');
 e(12,10,5,4,a);e(7.5,11,1.8,1.8,d);e(16.5,11,1.8,1.8,d);eyes(8,3);
 break;
+case 'mole':
+f(5,19,3,3,h);f(16,19,3,3,h);f(8,21,3,2,a);f(13,21,3,2,a);
+e(12,15,6+s*.5,6,a);e(12,17,3.5,3.5,b);
+e(12,9,5,4.5,a);e(12,11.5,2.6,1.8,b);f(11,10,2,1,d);eyes(7,3);
+f(3,14,3,2,h);f(18,14,3,2,h);
+if(s){f(8,2,2,3,h);f(14,2,2,3,h);f(11,1,2,3,h);e(5,16,2,3,a);e(19,16,2,3,a)}
+break;
+case 'pen':
+f(7,21,4,2,h);f(13,21,4,2,h);
+e(12,15,6,7,a);e(12,16.5,4,5,b);
+e(4.5,15,1.8,4.2,d);e(19.5,15,1.8,4.2,d);
+e(12,8,4.5,4.2,b);eyes(7,2);f(10,10,4,2,h);
+if(s){f(10,1,1,4,d);f(12,0,1,5,d);f(14,1,1,4,d)}else f(11,3,2,2,d);
+break;
+case 'fish':
+e(12,14,6,6.5,a);e(12,16,4,4,b);
+e(4.5,13,2,3,d);e(19.5,13,2,3,d);e(12,21,3,1.8,d);
+eyes(10,3);f(10,13,4,1,d);
+f(18,3,2,2,h);f(5,5,1,1,h);f(20,6,1,1,h);
+if(s){f(11,1,2,5,d);f(9,3,2,3,d);f(13,3,2,3,d)}
+break;
 default:
 e(9,4,2,5,a);e(15,4,2,5,a);e(9,4.5,1,3,d);e(15,4.5,1,3,d);
 e(12,18,5,4,a);e(12,18.5,3,3,b);f(7,21,3,2,a);f(14,21,3,2,a);
@@ -330,7 +391,7 @@ gpx[i]=P1.x*TS+8+(Math.random()-.5)*8;gpy[i]=P1.y*TS+11;gvx[i]=(Math.random()-.5
 function grassUpd(){for(let i=0;i<GPN;i++)if(gpl[i]>0){gpl[i]--;gpx[i]+=gvx[i];gpy[i]+=gvy[i];gvy[i]+=.09}}
 const P={a:false,b:false,m:false,s:false,i:false,k:false,dir:-1},Hd={a:false};
 
-function newG(){return{party:[],box:[],dex:{s:new Array(SP.length).fill(0),c:new Array(SP.length).fill(0)},bag:[0,0,0],money:0,flags:{},t:0,rs:0,cd:0,respawn:{m:'town',x:5,y:7,d:0}}}
+function newG(){return{party:[],box:[],dex:{s:new Array(SP.length).fill(0),c:new Array(SP.length).fill(0)},bag:new Array(ITEMS.length).fill(0),money:0,flags:{},t:0,rs:0,cd:0,respawn:{m:'town',x:5,y:7,d:0}}}
 function newP(){return{id:'pl',x:0,y:0,d:0,ch:'pl',ox:0,oy:0,alt:0,mv:0,sp:1,turn:0,vis:true}}
 let areaT='';const ban={t:'',f:0};
 function enterMap(k,x,y,d){cur=world[k];if(G&&G.flags&&k!=='home'&&k!=='home2')G.flags.ctlOff=true;if(cur.ttl&&cur.ttl!==areaT){areaT=cur.ttl;ban.t=cur.ttl;ban.f=150}P1.x=x;P1.y=y;P1.d=d;P1.ox=0;P1.oy=0;P1.mv=0;P1.turn=0}
@@ -394,6 +455,7 @@ R(m,1,1,7,1,BKS);R(m,3,2,3,1,TBL);S1(m,1,2,PLT);S1(m,7,2,PLT);S1(m,4,7,MAT);
 m.warps.push({x:4,y:7,to:'town',tx:20,ty:16,d:0,need:'starter',msg:'오박사: 기다리게! 먼저 몬스터를 골라야지!'});
 m.npcs.push(npc('prof',4,4,0,'prof',{fn:talkProf}));
 m.npcs.push(npc('rival1',6,3,0,'rival',{fn:talkRivalIdle}));
+m.npcs.push(npc('dexgirl',2,5,3,'girl',{fn:talkDexGirl,fixed:true}));
 w.lab=m;
 
 m=mapNew(20,56,GRS,'route');m.enc=true;m.ttl='들판길';
@@ -441,6 +503,7 @@ m.npcs.push(npc('c_girl2',17,16,2,'girl',{wander:2,msg:['저 호수에는 물 �
 m.npcs.push(npc('c_old2',13,16,0,'old',{wander:1,msg:['도장 안에도 치유소 직원이 있단다.','지치면 쉬었다가 도전하렴.']}));
 m.npcs.push(npc('c_mom',17,10,0,'mom',{fixed:true,fn:talkCityMom}));
 m.npcs.push(npc('c_boy2',19,8,2,'boy',{wander:1,msg:['도장 앞이야! 심호흡하고 들어가 봐.','처음엔 도전자들부터 차례로 이겨야 해!']}));
+m.npcs.push(npc('cq',5,17,3,'boy',{fn:talkQ2,fixed:true}));
 w.city=m;
 
 w.center=mkIn('center','center','city',4,7);
@@ -460,10 +523,13 @@ S1(m,2,7,SGN);m.signs['2,7']='← 솔바람시\n별빛마을 →\n(숲에서 몬
 S1(m,8,7,SGN);m.signs['8,7']='이 앞에 트레이너가 있어요.\n준비는 되셨나요?';
 S1(m,19,10,SGN);m.signs['19,10']='호수 마을까지 절반쯤 왔어요!';
 S1(m,30,10,SGN);m.signs['30,10']='별빛마을까지 조금만 더!';
-itm(m,2,3,0,2);itm(m,8,14,2,2);itm(m,19,3,1,1);itm(m,14,14,0,2);itm(m,30,14,2,2);itm(m,30,3,1,1);itm(m,37,14,0,2);itm(m,37,3,2,1);
+itm(m,2,3,0,2);itm(m,8,14,2,2);itm(m,19,3,1,1);itm(m,14,14,0,2);itm(m,30,14,2,2);itm(m,30,3,1,1);itm(m,37,14,0,2);itm(m,37,3,2,1);qitm(m,36,5,'q_ribbon','빨간 리본을 주웠다!');
 m.warps.push({x:0,y:8,to:'city',tx:22,ty:9,d:2},{x:0,y:9,to:'city',tx:22,ty:10,d:2},{x:39,y:8,to:'town2',tx:1,ty:9,d:3},{x:39,y:9,to:'town2',tx:1,ty:10,d:3});
 m.npcs.push(npc('tr4',11,7,0,'boy',{tr:{view:3,name:'소년 현우',party:[[4,6],[9,6]],rw:240,pre:'소년 현우: 숲에 들어왔으면 나랑 승부해야지!',lose:'소년 현우: 와, 내 몬스터들이 졌어!',post:'소년 현우: 숲은 점점 깊어져. 조심해서 가!'}}));
 m.npcs.push(npc('tr5',22,9,1,'girl',{tr:{view:3,name:'소녀 미나',party:[[6,7],[8,7]],rw:260,pre:'소녀 미나: 여기는 내가 지키는 길이야!',lose:'소녀 미나: 아앙, 졌다...',post:'소녀 미나: 저 앞에 한 명 더 있어. 힘내!'}}));
+m.npcs.push(npc('rk1a',35,8,2,'grunt',{fixed:true,msg:['...']}));
+m.npcs.push(npc('rk1b',36,9,2,'grunt',{fixed:true,msg:['...']}));
+m.trig.push({x:32,y:7,w:1,h:3,f:'rk1',need:'starter',fn:rk1});
 m.npcs.push(npc('tr6',33,7,0,'old',{tr:{view:3,name:'낚시꾼 철봉',party:[[8,8],[4,7]],rw:300,pre:'낚시꾼 철봉: 허허, 월척이 걸렸구나! 한판 붙자!',lose:'낚시꾼 철봉: 놓쳤다... 대단한 녀석이구먼!',post:'낚시꾼 철봉: 호수 마을은 바로 저 앞이야.'}}));
 w.route2=m;
 
@@ -471,7 +537,7 @@ m=mapNew(26,20,GRS,'town2');m.ttl='별빛마을';
 R(m,0,0,26,2,TRE);R(m,0,0,2,20,TRE);R(m,24,0,2,20,TRE);R(m,0,18,26,2,TRE);
 bld(m,4,3,5,ROR,2);bld(m,11,3,5,ROB,2);bld(m,18,3,4,ROG,1);
 bld(m,3,13,5,ROR,2);S1(m,5,16,WAL);
-R(m,0,9,23,2,GRD);R(m,6,7,1,2,GRD);R(m,13,7,1,2,GRD);R(m,19,7,1,2,GRD);
+R(m,0,9,23,2,GRD);R(m,6,7,1,2,GRD);R(m,13,7,1,2,GRD);R(m,19,7,1,2,GRD);R(m,23,9,3,2,GRD);
 R(m,13,13,10,4,WAT);R(m,10,13,2,2,TRE);R(m,22,5,2,3,TRE);
 sprinkle(m);
 S1(m,3,11,SGN);m.signs['3,11']='별빛마을\n호수에 별이 내려앉는 마을';
@@ -480,13 +546,18 @@ S1(m,11,7,SGN);m.signs['11,7']='별빛마을 상점';
 S1(m,21,7,SGN);m.signs['21,7']='낚시꾼의 오두막';
 S1(m,12,15,SGN);m.signs['12,15']='별빛 호수\n물 몬스터가 살고 있어요';
 lbl(m,6,6,'치유소',1);lbl(m,13,6,'상점',2);lbl(m,19,6,'오두막',0);
+S1(m,22,11,SGN);m.signs['22,11']='동쪽 호반숲길 →\n은빛포구 가는 길';m.fish={lo:5,hi:8,sp:[14,14,2,14]};m.night=1;
 m.warps.push({x:6,y:6,to:'tcenter2',tx:3,ty:4,d:1,rs:{m:'town2',x:6,y:7,d:0}},{x:13,y:6,to:'tmart2',tx:3,ty:4,d:1},{x:19,y:6,to:'hut',tx:3,ty:4,d:1},
-{x:0,y:9,to:'route2',tx:38,ty:8,d:2},{x:0,y:10,to:'route2',tx:38,ty:9,d:2});
+{x:0,y:9,to:'route2',tx:38,ty:8,d:2},{x:0,y:10,to:'route2',tx:38,ty:9,d:2},
+{x:25,y:9,to:'route3',tx:1,ty:8,d:3,need:'leader',msg:'이 앞은 위험하다고 한다.\n솔바람시 도장을 먼저 클리어하자!'},{x:25,y:10,to:'route3',tx:1,ty:9,d:3,need:'leader',msg:'이 앞은 위험하다고 한다.\n솔바람시 도장을 먼저 클리어하자!'});
 m.npcs.push(npc('s_girl',8,12,0,'girl',{wander:2,msg:['별빛마을은 호수가 아름다운 마을이야.','밤이 되면 호수에 별이 비친대!']}));
 m.npcs.push(npc('s_boy',16,11,2,'boy',{wander:2,msg:['호수 건너편은 아직 아무도 가 본 적이 없대.','낚시꾼 할아버지가 오두막에서 선물을 준다더라!']}));
 m.npcs.push(npc('s_old',10,16,0,'old',{wander:1,msg:['솔잎숲길의 낚시꾼 철봉이 내 친구야.','그 친구, 지고 나면 항상 억울해하지.']}));
-m.npcs.push(npc('s_girl2',21,12,2,'girl',{wander:1,msg:['치유소와 상점은 어느 마을이나 똑같이 생겼어.','그래도 여기 호수는 특별하지!']}));
+m.npcs.push(npc('s_girl2',21,12,2,'girl',{wander:1,fn:talkRibbon}));
 m.npcs.push(npc('s_boy2',16,8,0,'boy',{wander:1,msg:['숲에서 푸드덕과 번개쥐를 잡았어!','너도 도감을 가득 채워 봐!']}));
+m.npcs.push(npc('rk2a',17,11,2,'grunt',{fixed:true,msg:['...']}));
+m.npcs.push(npc('rk2b',18,11,2,'grunt',{fixed:true,msg:['...']}));
+m.trig.push({x:14,y:2,w:1,h:16,f:'rk2',need:'rk1',fn:rk2});
 m.npcs.push(npc('rival3',4,9,2,'rival',{vis:false,fixed:true,fn:talkRivalIdle}));
 m.trig.push({x:1,y:9,w:3,h:2,f:'rival3',need:'leader',fn:rival3});
 w.town2=m;
@@ -512,6 +583,87 @@ m.npcs.push(npc('gt2',6,8,2,'girl',{tr:{view:3,name:'문하생 나리',party:[[9
 m.npcs.push(npc('gt3',4,5,3,'boy',{tr:{view:3,name:'문하생 도현',party:[[8,6]],rw:250,pre:'문하생 도현: 마지막 관문은 나다! 덤벼라!',lose:'문하생 도현: 졌다... 도장주님께 가 보세요!',post:'문하생 도현: 이제 도장주님이 기다리고 계세요!'}}));
 m.npcs.push(npc('gnurse',8,13,2,'nurse',{fn:talkNurse,fixed:true}));
 w.gym=m;
+
+m=mapNew(40,18,GRS,'route3');m.enc=true;m.ttl='호반숲길';m.wb=10;m.wl=[10,10,12,12,6,8,4];m.fish={lo:9,hi:11,sp:[14,14,2]};
+R(m,0,0,40,2,TRE);R(m,0,16,40,2,TRE);R(m,0,0,1,18,TRE);R(m,39,0,1,18,TRE);
+for(const wx of [10,21,32]){R(m,wx,2,3,14,TRE);R(m,wx,7,3,3,GRS)}
+R(m,2,3,7,4,GRT);R(m,2,11,7,4,GRT);R(m,13,3,7,4,GRT);R(m,13,11,7,4,GRT);R(m,24,3,7,4,GRT);R(m,24,11,7,4,GRT);R(m,35,3,4,4,GRT);R(m,35,11,4,4,GRT);
+R(m,0,8,40,2,GRD);
+R(m,3,7,4,1,GRT);R(m,14,10,5,1,GRT);R(m,25,7,5,1,GRT);R(m,36,10,3,1,GRT);
+R(m,5,12,3,2,WAT);R(m,16,12,2,2,TRE);R(m,26,4,3,2,WAT);R(m,27,12,2,2,TRE);R(m,36,12,2,2,WAT);
+sprinkle(m);
+S1(m,2,7,SGN);m.signs['2,7']='← 별빛마을\n은빛포구 →\n(물가에서 낚시도 할 수 있어요)';
+S1(m,8,7,SGN);m.signs['8,7']='이 앞에 트레이너가 있어요.\n준비는 되셨나요?';
+S1(m,19,10,SGN);m.signs['19,10']='항구 마을까지 절반쯤 왔어요!';
+S1(m,30,10,SGN);m.signs['30,10']='은빛포구까지 조금만 더!';
+itm(m,2,3,3,2);itm(m,8,14,1,1);itm(m,19,3,2,3);itm(m,14,14,4,1);itm(m,30,14,10,1);itm(m,30,3,9,1);itm(m,37,14,0,3);itm(m,37,3,3,1);
+m.warps.push({x:0,y:8,to:'town2',tx:24,ty:9,d:2},{x:0,y:9,to:'town2',tx:24,ty:10,d:2},{x:39,y:8,to:'town3',tx:1,ty:9,d:3},{x:39,y:9,to:'town3',tx:1,ty:10,d:3});
+m.npcs.push(npc('rk3a',25,8,2,'admin',{fixed:true,msg:['...']}));
+m.trig.push({x:21,y:7,w:1,h:3,f:'rk3',need:'rk2',fn:rk3});
+m.npcs.push(npc('tr7',11,7,0,'boy',{tr:{view:3,name:'소년 건우',party:[[10,10],[4,10]],rw:360,pre:'소년 건우: 이 숲길은 내가 지키고 있어!',lose:'소년 건우: 으악, 내 모래굴이가!',post:'소년 건우: 호수 옆길은 시원해서 좋지. 조심해서 가!'}}));
+m.npcs.push(npc('tr8',22,9,1,'girl',{tr:{view:3,name:'소녀 다은',party:[[12,11],[8,10]],rw:380,pre:'소녀 다은: 내 눈송이와 함께 상대해 줄게!',lose:'소녀 다은: 눈송이가 녹아 버렸어...',post:'소녀 다은: 저 앞에도 낚시꾼이 있어. 힘내!'}}));
+m.npcs.push(npc('tr9',33,7,0,'old',{tr:{view:3,name:'낚시꾼 해강',party:[[14,11],[2,12]],rw:420,pre:'낚시꾼 해강: 허허, 이번엔 큰 놈이 걸렸군!',lose:'낚시꾼 해강: 놓쳤다... 대단하구먼!',post:'낚시꾼 해강: 은빛포구의 도장주는 파도의 달인이지.'}}));
+w.route3=m;
+
+m=mapNew(28,20,GRS,'town3');m.ttl='은빛포구';m.fish={lo:10,hi:13,sp:[14,14,2,14,2]};
+R(m,0,0,28,2,TRE);R(m,0,0,2,20,TRE);R(m,26,0,2,20,TRE);R(m,0,18,28,2,TRE);
+bld(m,2,3,5,ROR,2);bld(m,8,3,5,ROB,2);bld(m,14,3,4,ROG,1);bld(m,19,3,7,ROB,3);
+R(m,0,9,26,2,GRD);R(m,4,7,1,2,GRD);R(m,10,7,1,2,GRD);R(m,15,7,1,2,GRD);R(m,22,7,1,2,GRD);
+R(m,3,13,14,4,WAT);bld(m,19,13,6,ROB,3);
+sprinkle(m);
+S1(m,19,12,SGN);m.signs['19,12']='항구 창고\n(관계자 외 출입금지)';lbl(m,22,16,'창고',0);
+S1(m,2,7,SGN);m.signs['2,7']='치유소';
+S1(m,8,7,SGN);m.signs['8,7']='은빛포구 상점';
+S1(m,17,7,SGN);m.signs['17,7']='선장의 집';
+S1(m,19,7,SGN);m.signs['19,7']='은빛포구 도장\n도장주: 세라\n(파도를 다루는 달인)';
+S1(m,2,11,SGN);m.signs['2,11']='은빛포구\n바다와 함께 사는 항구 마을';
+lbl(m,4,6,'치유소',1);lbl(m,10,6,'상점',2);lbl(m,15,6,'선장집',0);lbl(m,22,6,'도장',0);
+m.warps.push({x:4,y:6,to:'tcenter3',tx:3,ty:4,d:1,rs:{m:'town3',x:4,y:7,d:0}},{x:10,y:6,to:'tmart3',tx:3,ty:4,d:1},{x:15,y:6,to:'house3',tx:3,ty:4,d:1},{x:22,y:6,to:'gym2',tx:5,ty:14,d:1,need:'rk4',msg:'도장 문이 굳게 닫혀 있다.\n"소동 때문에 잠시 쉽니다"\n항구 창고 쪽이 수상하다...'},{x:22,y:16,to:'depot',tx:5,ty:14,d:1},
+{x:0,y:9,to:'route3',tx:38,ty:8,d:2},{x:0,y:10,to:'route3',tx:38,ty:9,d:2});
+m.npcs.push(npc('p_girl',7,11,0,'girl',{wander:2,msg:['바다 냄새가 좋지?','이 마을 도장은 물 몬스터가 주력이야.']}));
+m.npcs.push(npc('p_boy',17,11,2,'boy',{wander:2,msg:['물 타입에는 풀이나 전기 타입이 강해!','번개쥐를 데려오면 든든할걸.']}));
+m.npcs.push(npc('p_old',11,12,0,'old',{wander:1,msg:['항구에서 낚싯대를 던져 보렴.','뽀글이가 곧잘 걸린단다.']}));
+m.npcs.push(npc('p_q3',24,11,2,'boy',{fn:talkQ3,fixed:true}));
+m.npcs.push(npc('master',21,12,2,'master',{vis:false,fn:talkMaster,fixed:true}));
+m.npcs.push(npc('rival4',4,9,2,'rival',{vis:false,fixed:true,fn:talkRivalIdle}));
+m.trig.push({x:1,y:9,w:3,h:2,f:'rival4',need:'leader',fn:rival4});
+w.town3=m;
+
+w.tcenter3=mkIn('tcenter3','center','town3',4,7);
+w.tmart3=mkIn('tmart3','mart','town3',10,7);
+
+m=mapNew(7,6,FLR,'house3');room(m);
+R(m,1,1,2,1,BKS);S1(m,5,1,PLT);S1(m,1,3,BED);R(m,4,3,2,1,TBL);S1(m,3,5,MAT);
+m.warps.push({x:3,y:5,to:'town3',tx:15,ty:7,d:0});
+m.npcs.push(npc('captain',3,3,0,'old',{fn:talkCaptain,fixed:true}));
+w.house3=m;
+
+m=mapNew(11,16,GYF,'gym2');room(m);
+R(m,3,1,5,3,CAR);R(m,4,4,3,11,CAR);
+for(const yy of [5,8,11]){R(m,1,yy,9,1,STT);R(m,4,yy,3,1,CAR)}
+R(m,1,6,2,2,WAT);R(m,8,6,2,2,WAT);R(m,1,9,2,2,WAT);R(m,8,9,2,2,WAT);
+S1(m,2,2,STT);S1(m,8,2,STT);S1(m,1,1,PLT);S1(m,9,1,PLT);S1(m,2,14,STT);S1(m,8,14,STT);
+S1(m,5,15,MAT);
+m.warps.push({x:5,y:15,to:'town3',tx:22,ty:7,d:0});
+m.npcs.push(npc('leader2',5,2,0,'leader2',{fn:talkLeader2,fixed:true}));
+m.npcs.push(npc('g2t1',4,11,3,'boy',{tr:{view:3,name:'문하생 파랑',party:[[14,11],[2,11]],rw:400,pre:'문하생 파랑: 세라 님께 가려면 우리를 이겨야 해!',lose:'문하생 파랑: 물거품처럼 사라졌네...',post:'문하생 파랑: 위쪽에 두 명이 더 있어요!'}}));
+m.npcs.push(npc('g2t2',6,8,2,'girl',{tr:{view:3,name:'문하생 은하',party:[[12,12],[14,12]],rw:420,pre:'문하생 은하: 파도처럼 몰아쳐 줄게!',lose:'문하생 은하: 대단해요! 다음 분께 가세요.',post:'문하생 은하: 이제 한 명 남았어요.'}}));
+m.npcs.push(npc('g2t3',4,5,3,'boy',{tr:{view:3,name:'문하생 바다',party:[[3,13]],rw:450,pre:'문하생 바다: 마지막 관문은 나다!',lose:'문하생 바다: 세라 님께 가 보세요!',post:'문하생 바다: 세라 님이 기다리고 계세요.'}}));
+m.npcs.push(npc('gnurse2',8,13,2,'nurse',{fn:talkNurse,fixed:true}));
+w.gym2=m;
+
+m=mapNew(11,16,GYF,'depot');room(m);
+R(m,3,1,5,3,CAR);R(m,4,4,3,11,CAR);
+for(const yy of [5,8,11]){R(m,1,yy,9,1,BKS);R(m,4,yy,3,1,CAR)}
+S1(m,2,2,BKS);S1(m,8,2,BKS);S1(m,2,14,BKS);S1(m,8,14,BKS);S1(m,1,1,BKS);S1(m,9,1,BKS);
+S1(m,5,15,MAT);
+m.warps.push({x:5,y:15,to:'town3',tx:22,ty:17,d:0});
+m.npcs.push(npc('boss',5,2,0,'boss',{fn:talkBoss,fixed:true}));
+m.npcs.push(npc('dt1',4,11,3,'grunt',{tr:{view:3,name:'단원 먹물',party:[[9,13]],rw:330,pre:'단원 먹물: 창고에는 아무도 못 들어와! 돌아가!',lose:'단원 먹물: 으악! 들켰다!',post:'단원 먹물: 보스님께 보고해야 하는데...'}}));
+m.npcs.push(npc('dt2',6,8,2,'grunt',{tr:{view:3,name:'단원 구름',party:[[14,13],[10,13]],rw:350,pre:'단원 구름: 여기서부터는 우리 구역이다!',lose:'단원 구름: 구름처럼 흩어지는군...',post:'단원 구름: 위에 한 명 더 있어. 난 모른다!'}}));
+m.npcs.push(npc('dt3',4,5,3,'grunt',{tr:{view:3,name:'단원 안개',party:[[6,13],[12,13]],rw:380,pre:'단원 안개: 보스님은 방해받는 걸 싫어하신다!',lose:'단원 안개: 보스님, 죄송합니다...',post:'단원 안개: 보스님은 바로 저 위에 계셔.'}}));
+w.depot=m;
+w.mart.stock=[0,1,2,3];w.tmart2.stock=[0,1,2,3];w.tmart3.stock=[0,1,2,3,4];
 return w}
 
 function npcById(m,id){for(let i=0;i<m.npcs.length;i++)if(m.npcs[i].id===id)return m.npcs[i];return null}
@@ -556,9 +708,9 @@ function npcAt(x,y){for(let i=0;i<cur.npcs.length;i++){const n=cur.npcs[i];if(!n
 function free(x,y){return x>=0&&y>=0&&x<cur.w&&y<cur.h&&!SOL[cur.t[y*cur.w+x]]&&!npcAt(x,y)}
 function sees(n){const v=n.tr.view,dx=P1.x-n.x,dy=P1.y-n.y;switch(n.d){case 0:return dx===0&&dy>0&&dy<=v;case 1:return dx===0&&dy<0&&-dy<=v;case 2:return dy===0&&dx<0&&-dx<=v;default:return dy===0&&dx>0&&dx<=v}}
 
-const dirs=[];let joyDir=-1,hd=-1,hold=0,pdir=-1;
+const dirs=[];let joyDir=-1,hd=-1,hold=0,pdir=-1,swp=-1;
 function heldDir(){return joyDir>=0?joyDir:(dirs.length?dirs[dirs.length-1]:-1)}
-function readInput(){const d=heldDir();if(d===hd&&d>=0)hold++;else{hd=d;hold=d>=0?1:0}pdir=-1;if(hold===1||(hold>18&&(hold-18)%6===0))pdir=d;P.dir=pdir}
+function readInput(){const d=heldDir();if(d===hd&&d>=0)hold++;else{hd=d;hold=d>=0?1:0}pdir=-1;if(hold===1||(hold>18&&(hold-18)%6===0))pdir=d;if(swp>=0){pdir=swp;swp=-1}P.dir=pdir}
 
 function wrapText(s,maxW){
 ctx.font=F9;const lines=[];let c='';
@@ -659,7 +811,17 @@ if(gtx>=0&&gty>=0&&gtx<m.w&&gty<m.h&&m.t[gty*m.w+gtx]===GRT){
 const sx=rp(P1.x*TS+P1.ox+exo(P1)-cx),sy=rp(P1.y*TS+P1.oy+eyo(P1)-cy);
 ctx.drawImage(TILES,GRT*TS,8,TS,8,sx,sy+8,TS,8)}
 for(let i=0;i<m.npcs.length;i++)if(m.npcs[i].y>P1.y)drawEnt(m.npcs[i],cx,cy);
-for(let i=0;i<GPN;i++)if(gpl[i]>0){ctx.fillStyle=gpl[i]&4?'#58c040':'#2f8a2c';ctx.fillRect(rp(gpx[i]-cx),rp(gpy[i]-cy),2,2)}}
+for(let i=0;i<GPN;i++)if(gpl[i]>0){ctx.fillStyle=gpl[i]&4?'#58c040':'#2f8a2c';ctx.fillRect(rp(gpx[i]-cx),rp(gpy[i]-cy),2,2)}
+if(m.night)drawNight(cx,cy,x0,x1,y0,y1)}
+function drawNight(cx,cy,x0,x1,y0,y1){
+ctx.fillStyle='rgba(14,22,70,.26)';ctx.fillRect(0,0,VW,H);
+const t=fr>>5;
+for(let y=y0;y<=y1;y++)for(let x=x0;x<=x1;x++){
+const id=cur.t[y*cur.w+x];
+if(id!==WAT&&id!==WAT2)continue;
+if((x*7+y*13+t)%9!==0)continue;
+const sx=rp(x*TS-cx)+((x*5+y*3)%10)+2,sy=rp(y*TS-cy)+((x*3+y*7)%10)+2;
+ctx.fillStyle='#fff8c8';ctx.fillRect(sx,sy-1,1,3);ctx.fillRect(sx-1,sy,3,1)}}
 
 function dMon(spr,x,y,ff,flip){
 if(ff>=1)return;
@@ -706,21 +868,24 @@ txt(TN[mv[1]]+'  횟수 '+pm.pp[b.msel]+'/'+mv[4]+'  '+(mv[2]?'위력 '+mv[2]:'�
 function hdr(t,r){ctx.fillStyle='#a05030';ctx.fillRect(-OX,0,VW,15);txt(t,6,2,F9,'#fff');if(r){ctx.textAlign='right';txt(r,154,3,F8,'#ffe9a8');ctx.textAlign='left'}}
 function arL(x,y){ctx.fillStyle='#a05030';ctx.fillRect(x+3,y,1,1);ctx.fillRect(x+2,y+1,2,1);ctx.fillRect(x+1,y+2,3,1);ctx.fillRect(x,y+3,4,1);ctx.fillRect(x+1,y+4,3,1);ctx.fillRect(x+2,y+5,2,1);ctx.fillRect(x+3,y+6,1,1)}
 function arR(x,y){ctx.fillStyle='#a05030';ctx.fillRect(x,y,1,1);ctx.fillRect(x,y+1,2,1);ctx.fillRect(x,y+2,3,1);ctx.fillRect(x,y+3,4,1);ctx.fillRect(x,y+4,3,1);ctx.fillRect(x,y+5,2,1);ctx.fillRect(x,y+6,1,1)}
-const DBAG=[['몬스터 한 마리의 체력을','30 회복시킨다.'],['체력을 80 회복하고','상태이상도 치료한다.'],['야생 몬스터에게 던져 잡는다.','(전투 중에만 사용)'],['가방을 닫는다.','']];
-const DSHOP=[['몬스터의 체력을','30 회복시킨다.'],['체력 80 회복과','상태이상 치료.'],['야생 몬스터를 잡는 데','사용하는 볼이다.'],['상점을 나간다.','']];
 function listRows(s,shop){
+const L=s.list,n=L.length;
 for(let i=0;i<4;i++){
-const y=19+i*17;
-if(i===s.sel){ctx.fillStyle='#f8e8a0';ctx.fillRect(3,y-2,154,16);ctx.fillStyle='#d8a020';ctx.fillRect(3,y-2,154,1);ctx.fillRect(3,y+13,154,1);curs(6,y+2)}
-if(i<3){
-const c=shop||G.bag[i]>0?'#181818':'#909090';
-txt(ITEMS[i].n,16,y,F9,c);
+const k=s.top+i,y=19+i*17;
+if(k>=n)break;
+if(k===s.sel){ctx.fillStyle='#f8e8a0';ctx.fillRect(3,y-2,154,16);ctx.fillStyle='#d8a020';ctx.fillRect(3,y-2,154,1);ctx.fillRect(3,y+13,154,1);curs(6,y+2)}
+const id=L[k];
+if(id<0)txt(shop?'나가기':'닫기',16,y,F9);
+else{
+txt(ITEMS[id].n,16,y,F9);
 ctx.textAlign='right';
-if(shop){txt('보유 '+G.bag[i],96,y+2,F8,'#686868');txt(ITEMS[i].price+'원',152,y,F9,c)}
-else txt('×'+G.bag[i],152,y,F9,c);
-ctx.textAlign='left'
-}else txt(shop?'나가기':'닫기',16,y,F9)}
-const d=(shop?DSHOP:DBAG)[s.sel];
+if(shop){txt('보유 '+G.bag[id],104,y+2,F8,'#686868');txt(ITEMS[id].price+'원',152,y,F9)}
+else txt('×'+G.bag[id],152,y,F9);
+ctx.textAlign='left'}}
+ctx.fillStyle='#a05030';
+if(s.top>0){ctx.fillRect(152,15,1,1);ctx.fillRect(151,16,3,1);ctx.fillRect(150,17,5,1)}
+if(s.top+4<n){ctx.fillRect(150,84,5,1);ctx.fillRect(151,85,3,1);ctx.fillRect(152,86,1,1)}
+const id=L[s.sel],d=id<0?[shop?'상점을 나간다.':'가방을 닫는다.','']:ITEMS[id].d;
 box(3,90,154,50);txt(d[0],10,96,F8);txt(d[1],10,108,F8);
 if(s.mt>0)txt(s.msg,10,124,F9,s.mc||'#d02020')}
 function drawScr(){
@@ -770,7 +935,8 @@ ctx.fillStyle='#e8f0e0';ctx.fillRect(-OX,0,VW,H);
 if(!s.det){
 hdr('도감','발견 '+ns+'  포획 '+nc);
 for(let i=0;i<SP.length;i++){
-const x=3+(i&1)*78,y=18+(i>>1)*25,sn=G.dex.s[i],cg=G.dex.c[i];
+const r=(i>>1)-s.top;if(r<0||r>4)continue;
+const x=3+(i&1)*78,y=18+r*25,sn=G.dex.s[i],cg=G.dex.c[i];
 if(i===s.sel){ctx.fillStyle='#f8e8a0';ctx.fillRect(x,y,76,23);ctx.fillStyle='#d8a020';ctx.fillRect(x,y,76,1);ctx.fillRect(x,y+22,76,1)}
 if(sn)ctx.drawImage(MS[i],x+2,y+1,21,21);else{ctx.fillStyle='#b8c0b0';ctx.fillRect(x+4,y+3,16,16)}
 txt('No.'+String(i+1).padStart(2,'0'),x+25,y+2,F7,'#686868');
@@ -936,7 +1102,7 @@ function drawEnding(){
 for(let i=0;i<9;i++){ctx.fillStyle=['#14204a','#1c2c5c','#24386e','#2c4480','#345092','#3c5ca4','#4468b6','#4c74c8','#5480da'][i];ctx.fillRect(-OX,i*16,VW,16)}
 ctx.textAlign='center';
 txt('축하합니다!',80,8,F20,'#ffe060');
-txt('솔바람시 도장을 클리어했습니다',80,34,F8,'#fff');
+txt(G.flags.leader2?'두 도장을 모두 클리어했습니다':'솔바람시 도장을 클리어했습니다',80,34,F8,'#fff');
 txt('플레이 시간 '+fmtT(G.t),80,46,F8,'#fff');
 const n=G.party.length;
 for(let i=0;i<n;i++){const x=80-n*20+i*40;ctx.drawImage(MS[G.party[i].s],x,62,36,36);txt('Lv'+G.party[i].l,x+18,100,F7,'#fff')}
@@ -994,36 +1160,41 @@ const d=P.dir;
 if(d===2&&sc.sel>0){sc.sel--;sfx('sel')}
 if(d===3&&sc.sel<2){sc.sel++;sfx('sel')}
 if(P.a){sfx('ok');ui.scr=null;return sc.sel}}}
-function* shopScreen(){
-const sc={t:'shop',sel:0,msg:'',mt:0,mc:'#d02020'};
+function* shopScreen(stock){
+const sc={t:'shop',sel:0,top:0,list:stock.concat([-1]),msg:'',mt:0,mc:'#d02020'};
 ui.scr=sc;
 for(;;){
 yield;
 if(sc.mt>0)sc.mt--;
-const d=P.dir;
-if(d===0&&sc.sel<3){sc.sel++;sfx('sel')}
+const d=P.dir,n=sc.list.length;
+if(d===0&&sc.sel<n-1){sc.sel++;sfx('sel')}
 if(d===1&&sc.sel>0){sc.sel--;sfx('sel')}
+if(sc.sel<sc.top)sc.top=sc.sel;else if(sc.sel>sc.top+3)sc.top=sc.sel-3;
 if(P.b){ui.scr=null;return}
 if(P.a){
-if(sc.sel===3){ui.scr=null;return}
-const it=ITEMS[sc.sel];
+const id=sc.list[sc.sel];
+if(id<0){ui.scr=null;return}
+const it=ITEMS[id];
 if(G.money<it.price){sc.msg='돈이 부족해요!';sc.mc='#d02020';sc.mt=70}
-else{G.money-=it.price;G.bag[sc.sel]++;sfx('ok');sc.msg='구입했다! (보유 '+G.bag[sc.sel]+'개)';sc.mc='#2060c0';sc.mt=70}}}}
+else{G.money-=it.price;G.bag[id]++;sfx('ok');sc.msg='구입했다! (보유 '+G.bag[id]+'개)';sc.mc='#2060c0';sc.mt=70}}}}
 function* bagPick(inB){
-const sc={t:'bag',sel:0,msg:'',mt:0};
+const L=[];
+for(let i=0;i<ITEMS.length;i++){const k=ITEMS[i].k;if(G.bag[i]>0&&(inB?(k==='heal'||k==='cure'||k==='ball'||k==='pp'):k!=='ball'))L.push(i)}
+L.push(-1);
+const sc={t:'bag',sel:0,top:0,list:L,msg:'',mt:0};
 ui.scr=sc;
 for(;;){
 yield;
 if(sc.mt>0)sc.mt--;
-const d=P.dir;
-if(d===0&&sc.sel<3){sc.sel++;sfx('sel')}
+const d=P.dir,n=L.length;
+if(d===0&&sc.sel<n-1){sc.sel++;sfx('sel')}
 if(d===1&&sc.sel>0){sc.sel--;sfx('sel')}
+if(sc.sel<sc.top)sc.top=sc.sel;else if(sc.sel>sc.top+3)sc.top=sc.sel-3;
 if(P.b){ui.scr=null;return -1}
 if(P.a){
-if(sc.sel===3){ui.scr=null;return -1}
-if(G.bag[sc.sel]<=0){sc.msg='가지고 있지 않다.';sc.mt=60;continue}
-if(sc.sel===2&&!inB){sc.msg='전투 중에만 쓸 수 있다.';sc.mt=60;continue}
-sfx('ok');ui.scr=null;return sc.sel}}}
+const id=L[sc.sel];
+if(id<0){ui.scr=null;return -1}
+sfx('ok');ui.scr=null;return id}}}
 function learnList(m){return SP[m.s].ls}
 function* learnNew(m){
 const ls=learnList(m);
@@ -1229,7 +1400,7 @@ if(it>=0){
 const idx=yield* partyScreen('item','누구에게 쓸까요?');
 if(idx>=0){
 const m=G.party[idx];
-if(m.hp<=0||m.hp>=m.mhp){B.mode='text';yield* say('효과가 없다!',24);B.mode='menu';continue}
+if(!itemOk(m,it)){B.mode='text';yield* say('효과가 없다!',24);B.mode='menu';continue}
 B.mode='text';return{k:'potion',id:it,i:idx}}}
 B.mode='menu'
 }else if(B.sel===2){
@@ -1262,9 +1433,9 @@ if(Math.random()<Math.min(.95,Math.max(.3,.55+(b.pm.sd-b.fm.sd)/60))){yield* say
 yield* say('도망칠 수 없었다!',30)
 }else if(act.k==='potion'){
 const m=G.party[act.i];
-G.bag[act.id]--;m.hp=Math.min(m.mhp,m.hp+ITEMS[act.id].h);if(act.id===1)m.st=0;sfx('heal');
+G.bag[act.id]--;const imsg=itemApply(m,act.id);sfx('heal');
 yield* syncHp();
-yield* say(eunn(nm(m))+' 체력을 회복했다!',26)
+yield* say(eunn(nm(m))+' '+imsg,26)
 }else if(act.k==='swap'){
 yield* say('돌아와, '+nm(b.pm)+'!',22);
 b.showP=false;yield* wait(6);
@@ -1379,11 +1550,23 @@ function* signScript(s){yield* say(s)}
 function interact(){
 const fx=P1.x+DX[P1.d],fy=P1.y+DY[P1.d],n=npcAt(fx,fy);
 if(n){if(n.mv>0)return;script=talk(n);return}
-if(fx>=0&&fy>=0&&fx<cur.w&&fy<cur.h&&cur.t[fy*cur.w+fx]===SGN){const s=cur.signs[fx+','+fy];if(s)script=signScript(s)}}
+if(fx>=0&&fy>=0&&fx<cur.w&&fy<cur.h){
+const t=cur.t[fy*cur.w+fx];
+if(t===SGN){const s=cur.signs[fx+','+fy];if(s)script=signScript(s)}
+else if((t===WAT||t===WAT2)&&cur.fish&&G.flags.rod)script=fishing()}}
+function* fishing(){
+yield* say('낚싯대를 던졌다...',20);
+yield* wait(40+((Math.random()*50)|0));
+if(Math.random()<.65){
+sfx('excl');
+yield* say('앗! 입질이다!',20);
+const f=cur.fish,sp=f.sp[(Math.random()*f.sp.length)|0],lv=f.lo+((Math.random()*(f.hi-f.lo+1))|0);
+yield* fight([mkMon(sp,lv)],null)
+}else yield* say('아무것도 걸리지 않았다...',24)}
 function* wild(){
 const r=Math.random();
 let lo,sp;
-if(cur.wb>0){lo=cur.wb+((P1.x/14)|0);sp=r<.3?8:r<.55?6:r<.8?4:9}
+if(cur.wb>0){lo=cur.wb+((P1.x/14)|0);sp=cur.wl?cur.wl[(r*cur.wl.length)|0]:(r<.3?8:r<.55?6:r<.8?4:9)}
 else{lo=2+(((55-P1.y)/20)|0);sp=r<.4?6:r<.7?9:8}
 const hi=lo+1,lv=lo+((Math.random()*(hi-lo+1))|0);
 yield* fight([mkMon(sp,lv)],null)}
@@ -1444,9 +1627,26 @@ if(it<0)return;
 const idx=yield* partyScreen('item','누구에게 쓸까요?');
 if(idx<0)continue;
 const m=G.party[idx];
-if(m.hp<=0||m.hp>=m.mhp){yield* say('효과가 없다!',24);continue}
-G.bag[it]--;m.hp=Math.min(m.mhp,m.hp+ITEMS[it].h);sfx('heal');
-yield* say(eunn(nm(m))+' 체력을 회복했다!',28)}}
+if(ITEMS[it].k==='tm'){if(yield* teachTM(m,it))G.bag[it]--;continue}
+if(!itemOk(m,it)){yield* say('효과가 없다!',24);continue}
+G.bag[it]--;const imsg=itemApply(m,it);sfx('heal');
+yield* say(eunn(nm(m))+' '+imsg,28)}}
+function* teachTM(m,id){
+const mid=ITEMS[id].mv,mv=MV[mid];
+if(m.mv.indexOf(mid)>=0){yield* say(eunn(nm(m))+' 이미 알고 있는 기술이다!',26);return false}
+if(mv[1]!==0&&mv[1]!==SP[m.s].t){yield* say('타입이 맞지 않아 배울 수 없다!',26);return false}
+if(m.mv.length<4){m.mv.push(mid);m.pp.push(mv[4])}
+else{
+yield* say(eunn(nm(m))+' '+eul(mv[0])+' 배우려 한다. 잊을 기술을 고르세요.',0,true);
+const nms=[];for(let i=0;i<4;i++)nms.push(MV[m.mv[i]][0]);
+nms.push('그만두기');
+const i=yield* menu(nms,70,6,86,1,true,0);
+ui.dlg=null;
+if(i<0||i>=4)return false;
+m.mv[i]=mid;m.pp[i]=mv[4]}
+sfx('lv');
+yield* say(eunn(nm(m))+' '+eul(mv[0])+' 배웠다!',30);
+return true}
 function applyScreen(){
 const el=document.documentElement;
 try{
@@ -1481,11 +1681,11 @@ function* settingsOnly(){yield* settings()}
 function* bagOnly(){yield* bagField()}
 function* monOnly(){if(G.party.length)yield* partyScreen('view','몬스터 상태');else yield* say('아직 몬스터가 없다.',24)}
 function* dexScreen(){
-const sc={t:'dex',sel:0,det:false};ui.scr=sc;
+const sc={t:'dex',sel:0,det:false,top:0};ui.scr=sc;
 for(;;){
 yield;
 const d=P.dir,n=SP.length;
-if(!sc.det&&d>=0){let q=sc.sel;if(d===0)q+=2;else if(d===1)q-=2;else if(d===2)q-=1;else if(d===3)q+=1;if(q>=0&&q<n&&q!==sc.sel){sc.sel=q;sfx('sel')}}
+if(!sc.det&&d>=0){let q=sc.sel;if(d===0)q+=2;else if(d===1)q-=2;else if(d===2)q-=1;else if(d===3)q+=1;if(q>=0&&q<n&&q!==sc.sel){sc.sel=q;sfx('sel');const r=q>>1;if(r<sc.top)sc.top=r;else if(r>sc.top+4)sc.top=r-4}}
 if(P.a){if(sc.det)sc.det=false;else if(G.dex.s[sc.sel]){sfx('ok');sc.det=true}}
 if(P.b){if(sc.det)sc.det=false;else{ui.scr=null;return}}}}
 function* pauseMenu(){
@@ -1521,7 +1721,7 @@ pick=yield* pickStarter();
 const s=SP[STR[pick]];
 if(yield* yn(eul(s.n)+' 고르겠나?\n('+TN[s.t]+' 타입)'))break}
 const sid=STR[pick];
-G.party.push(mkMon(sid,5));dexC(G.party[0]);G.rs=RIV[sid];G.bag=[5,0,8];
+G.party.push(mkMon(sid,5));dexC(G.party[0]);G.rs=RIV[sid];G.bag[0]=5;G.bag[1]=0;G.bag[2]=8;
 sfx('lv');
 yield* say(eunn(PN)+' '+eul(SP[sid].n)+' 손에 넣었다!');
 yield* say('오박사: 회복약 5개와 몬스터볼 8개도 가져가게.');
@@ -1563,8 +1763,10 @@ yield* say(RN+': 내 몬스터도 한층 강해졌다고!');
 const r=yield* fight([mkMon(G.rs,6)],{name:RN,ch:'rival',rw:300,lose:RN+': 큭... 도장주 하람은 만만치 않을 거야. 조심해!'});
 rv.vis=false;
 if(r==='lose')return}
+function qitm(m,x,y,q,msg){(m.items||(m.items=[])).push({x,y,i:-1,n:0,k:'it_'+m.k+x+'_'+y,q,msg})}
 function itm(m,x,y,i,n){(m.items||(m.items=[])).push({x,y,i,n,k:'it_'+m.k+x+'_'+y})}
 function* pickItem(it){
+if(it.i<0){G.flags[it.k]=true;G.flags[it.q]=true;sfx('ok');yield* say(it.msg,40);return}
 G.flags[it.k]=true;G.bag[it.i]+=it.n;sfx('ok');
 yield* say(eunn(PN)+' '+ITEMS[it.i].n+' '+it.n+'개를 주웠다!',40)}
 function lbl(m,x,y,t,k){(m.lbl||(m.lbl=[])).push({x,y,t,k,w:0})}
@@ -1601,8 +1803,8 @@ else if(i===1)yield* boxScreen();
 else break}
 yield* say('또 오세요!')}
 function* talkClerk(){
-yield* say('어서 오세요! 회복약과 몬스터볼을 팔고 있어요.');
-yield* shopScreen();
+yield* say('어서 오세요! 필요한 물건을 골라 보세요.');
+yield* shopScreen(cur.stock||[0,1,2]);
 yield* say('또 오세요!')}
 function* talkCityMom(){
 if(G.flags.cityGift){yield* say('아주머니: 모험 잘하고 있니? 몸조심하렴!');return}
@@ -1611,11 +1813,152 @@ yield* say('아주머니: 어머, 모험가구나! 이거 가져가렴.');
 G.bag[0]+=3;sfx('ok');
 yield* say(eunn(PN)+' 회복약 3개를 받았다!')}
 function* talkAngler(){
-if(G.flags.angGift){yield* say('낚시꾼: 호수는 오늘도 평화롭구나. 모험 잘하렴!');return}
+if(G.flags.rod){yield* say('낚시꾼: 호수는 오늘도 평화롭구나. 물가를 향해 A를 눌러 낚싯대를 던져 보렴!');return}
+if(!G.flags.angGift){
 G.flags.angGift=true;
 yield* say('낚시꾼: 오오, 먼 길을 왔구나! 이걸 받아라.');
 G.bag[1]+=2;G.bag[2]+=3;sfx('ok');
 yield* say(eunn(PN)+' 고급회복약 2개와 몬스터볼 3개를 받았다!')}
+G.flags.rod=true;
+yield* say('낚시꾼: 그리고 이 낚싯대도 주마. 물가를 바라보고 A를 누르면 던질 수 있단다.');
+sfx('lv');
+yield* say(eunn(PN)+' 낚싯대를 받았다!')}
+function* talkRibbon(){
+if(G.flags.q1done){yield* say('소녀: 리본 덕분에 기분이 좋아! 고마워!');return}
+if(G.flags.q_ribbon){
+yield* say('소녀: 어머, 내 리본이야! 찾아 줬구나!');
+G.bag[4]+=1;G.flags.q1done=true;sfx('ok');
+yield* say(eunn(PN)+' 기력의조각 1개를 받았다!');return}
+yield* say('소녀: 엉엉... 솔잎숲길 어딘가에서 빨간 리본을 잃어버렸어.');
+yield* say('소녀: 혹시 발견하면 가져다줄래?')}
+function* talkQ2(){
+if(G.flags.q2done){yield* say('청년: 회복약 덕에 살았어! 고마워!');return}
+yield* say('청년: 크윽... 모험 중에 약이 다 떨어졌어. 회복약 하나만 나눠 줄 수 있을까?');
+if(G.bag[0]<=0){yield* say('(회복약이 없다...)');return}
+if(yield* yn('회복약 1개를 줄까?')){
+G.bag[0]--;G.flags.q2done=true;G.bag[3]+=3;sfx('ok');
+yield* say('청년: 고마워! 보답으로 이걸 줄게!');
+yield* say(eunn(PN)+' 상태회복약 3개를 받았다!')
+}else yield* say('청년: 그렇군... 어쩔 수 없지.')}
+function* talkQ3(){
+if(G.flags.q3done){yield* say('청년: 번개쥐 덕에 좋은 연구를 했어. 고마워!');return}
+if(G.dex.c[8]){
+yield* say('청년: 오오! 번개쥐를 도감에 등록했구나! 대단해!');
+G.bag[8]+=1;G.flags.q3done=true;sfx('ok');
+yield* say(eunn(PN)+' 기술머신 스파크를 받았다!');return}
+yield* say('청년: 나는 몬스터 연구가야. 번개쥐를 잡은 트레이너를 찾고 있어.');
+yield* say('청년: 번개쥐는 풀숲에서 만날 수 있어. 잡으면 다시 와 줘!')}
+function* talkCaptain(){
+yield* say('선장: 바다 너머에는 아직 지도에 없는 땅이 있다네.');
+yield* say('선장: 이 마을 도장의 도장주 세라는 파도를 다루는 달인이지.');
+yield* say('선장: 물 타입에는 풀이나 전기 타입으로 맞서면 좋다네.')}
+function* talkDexGirl(){
+let c=0;for(let i=0;i<SP.length;i++)c+=G.dex.c[i];
+yield* say('연구원: 나는 오박사님의 조수야. 도감을 얼마나 채웠는지 봐 줄게!');
+yield* say('연구원: 지금까지 '+c+'마리를 잡았구나!');
+let got=false;
+if(c>=4&&!G.flags.dx4){G.flags.dx4=true;G.bag[1]+=3;got=true;sfx('ok');yield* say('4마리 달성! 고급회복약 3개를 받았다!')}
+if(c>=8&&!G.flags.dx8){G.flags.dx8=true;G.bag[2]+=10;G.bag[3]+=3;got=true;sfx('ok');yield* say('8마리 달성! 몬스터볼 10개와 상태회복약 3개를 받았다!')}
+if(c>=12&&!G.flags.dx12){G.flags.dx12=true;G.bag[4]+=3;G.bag[7]+=1;got=true;sfx('ok');yield* say('12마리 달성! 기력의조각 3개와 기술머신 나뭇잎베기를 받았다!')}
+if(c>=SP.length&&!G.flags.dxall){G.flags.dxall=true;G.bag[4]+=5;G.bag[2]+=20;got=true;sfx('lv');yield* say('도감 완성! 기력의조각 5개와 몬스터볼 20개를 받았다! 축하해!')}
+if(!got){
+const nx=c<4?4:c<8?8:c<12?12:SP.length;
+if(c>=SP.length)yield* say('연구원: 도감을 완성했구나! 정말 대단해!');
+else yield* say('연구원: 다음 목표는 '+nx+'마리야! 힘내!')}}
+function* talkMaster(){
+yield* say('명인: 두 도장을 모두 깬 트레이너로군.');
+if(!(yield* yn('나와 승부해 보겠나?\n(몇 번이든 도전할 수 있다)'))){yield* say('명인: 언제든 다시 오게.');return}
+let lv=0;for(let i=0;i<G.party.length;i++)lv=Math.max(lv,G.party[i].l);
+lv=Math.min(45,lv+2);
+const r=yield* fight([mkMon(11,lv),mkMon(13,lv),mkMon(15,lv)],{name:'명인 철강',ch:'master',rw:800,lose:'명인 철강: 아직 멀었군!'});
+if(r==='win')yield* say('명인 철강: 훌륭하네! 또 도전하게나.')}
+function* rival4(){
+G.flags.rival4=true;
+const rv=npcById(cur,'rival4');
+rv.vis=true;
+yield* notice(rv);
+yield* approach(rv);
+yield* say(RN+': 드디어 왔구나, '+PN+'! 여기서 기다리고 있었어.');
+yield* say(RN+': 그런데 말이야, 항구 창고에 검은 옷을 입은 무리가 드나들더라. 먹구름단이라고 했지?');
+yield* say(RN+': 아무튼 호수를 건너 여기까지 온 걸 보면 실력이 대단하네. 먼저 제대로 붙어 보자!');
+const r=yield* fight([mkMon(SP[G.rs].evT,13),mkMon(8,12),mkMon(7,13)],{name:RN,ch:'rival',rw:600,lose:RN+': 으윽... 아직 부족한가!'});
+rv.vis=false;
+if(r==='lose')return;
+yield* say(RN+': ...졌다. 정말 강해졌구나.');
+yield* say(RN+': 도장 문이 잠겨 있던데, 창고 쪽 소동 때문인가 봐. 네가 먼저 가 봐. 나는 더 강해져서 돌아올게!')}
+function* rk1(){
+const a=npcById(cur,'rk1a'),b=npcById(cur,'rk1b');
+yield* notice(a);
+yield* approach(a);
+yield* say('검은 옷의 남자: 어이, 꼬마. 이 길은 지금부터 우리 먹구름단이 접수했다!');
+yield* say('단원: 곧 이 숲의 몬스터들을 전부 모을 거야. 방해하려면 승부로 해라!');
+const r=yield* fight([mkMon(9,7),mkMon(10,7)],{name:'먹구름단 단원',ch:'grunt',rw:300,lose:'단원: 흥, 오늘은 운이 좋았군!'});
+if(r!=='win')return;
+G.flags.rk1=true;
+yield* say('단원: 으윽... 이 정도 실력이라니. 보스께 보고해야겠어.');
+yield* say('다른 단원: 별빛마을 호수의 별빛 조각만 손에 넣으면 우리 계획은 완성이다! 가자!');
+a.vis=false;b.vis=false;
+yield* say(PN+': 먹구름단... 별빛마을이 위험하다!');
+G.bag[0]+=2;sfx('ok');
+yield* say('단원이 떨어뜨린 회복약 2개를 주웠다!')}
+function* rk2(){
+const a=npcById(cur,'rk2a'),b=npcById(cur,'rk2b');
+yield* notice(a);
+yield* approach(a);
+yield* say('단원: 으헤헤, 호수의 별빛 조각 채집은 순조롭군.');
+yield* say('단원: 앗! 숲에서 소동을 피운 꼬마가 여기까지 쫓아왔냐!');
+const r=yield* fight([mkMon(9,8),mkMon(14,8),mkMon(6,8)],{name:'먹구름단 단원',ch:'grunt',rw:400,lose:'단원: 크하하, 별빛 조각은 우리 거다!'});
+if(r!=='win')return;
+G.flags.rk2=true;
+yield* say('단원: 쳇... 조각은 이미 절반 넘게 모았다고!');
+yield* say('다른 단원: 나머지는 은빛포구 창고로 옮겨 놨어. 보스께서 기다리신다. 철수!');
+a.vis=false;b.vis=false;
+yield* say(PN+': 은빛포구 창고...! 서둘러 가 봐야겠어.');
+if(!G.flags.leader)yield* say(PN+': 먼저 솔바람시 도장을 클리어해야 길이 열린대. 실력을 쌓자!')}
+function* rk3(){
+const a=npcById(cur,'rk3a');
+yield* notice(a);
+yield* approach(a);
+yield* say('서린: 어머, 여기까지 오다니. 단원들이 자꾸 당하는 이유가 있었네.');
+yield* say('서린: 나는 먹구름단 간부 서린. 보스 묵운 님의 계획을 방해하게 둘 순 없어.');
+const r=yield* fight([mkMon(10,12),mkMon(14,12),mkMon(9,13)],{name:'간부 서린',ch:'admin',rw:700,lose:'서린: 호호, 아직 멀었네.'});
+if(r!=='win')return;
+G.flags.rk3=true;
+yield* say('서린: ...강하네. 하지만 늦었어. 별빛 조각은 이미 은빛포구 창고에 모였으니까.');
+yield* say('서린: 보스는 항구 창고 안쪽에 있어. 올 수 있다면 와 보렴.');
+a.vis=false}
+function* talkBoss(n){
+if(G.flags.rk4){yield* say('...');return}
+yield* say('묵운: 여기까지 쫓아오다니, 꽤 끈질기구나.');
+yield* say('묵운: 별빛 조각 하나면 어떤 몬스터도 내 명령을 따르게 된다.');
+yield* say('묵운: 몬스터는 사람이 다스려야 해. 방해하지 마라!');
+const r=yield* fight([mkMon(9,15),mkMon(11,15),mkMon(15,15)],{name:'보스 묵운',ch:'boss',rw:1000,lose:'묵운: 후후, 먹구름은 사라지지 않는다.'});
+if(r!=='win')return;
+G.flags.rk4=true;
+yield* say('묵운: 이럴 수가... 내 먹구름이...!');
+yield* say('묵운: 하지만 이걸로 끝이 아니다. 먹구름은 또 모일 것이다!');
+n.vis=false;
+sfx('lv');
+yield* say(eunn(PN)+' 별빛 조각을 되찾았다!');
+yield* say(PN+': 조각은 호수로 돌려보내야겠어. 이제 모두 안전할 거야.');
+G.bag[2]+=5;G.bag[4]+=2;
+yield* say('창고 구석에서 몬스터볼 5개와 기력의조각 2개를 발견했다!');
+yield* say('멀리서 도장 문이 열리는 소리가 들렸다. 이제 세라에게 도전할 수 있다!')}
+function* talkLeader2(n){
+if(!G.flags.leader2&&!(G.flags.d_g2t1&&G.flags.d_g2t2&&G.flags.d_g2t3)){yield* say('세라: 도전자 세 명을 먼저 쓰러뜨리고 오세요!');return}
+if(G.flags.leader2){yield* say('세라: 정말 멋진 승부였어요. 또 만나요!');return}
+if(G.flags.rk4)yield* say('세라: 창고 소식 들었어요. 먹구름단을 막아 주셔서 고마워요!');
+yield* say('세라: 잘 왔어요! 저는 은빛포구 도장의 도장주 세라!');
+yield* say('세라: 바다와 얼음의 힘을 보여 드리죠!');
+const r=yield* fight([mkMon(3,14),mkMon(15,15),mkMon(13,16)],{name:'도장주 세라',ch:'leader2',rw:1200,lose:'세라: 제가 졌네요... 훌륭한 승부였어요!'});
+if(r!=='win')return;
+G.flags.leader2=true;
+npcById(world.town3,'master').vis=true;
+sfx('lv');
+yield* say('세라: 승리의 증표로 물결훈장을 드릴게요. 받아 주세요!');
+yield* say(eunn(PN)+' 물결훈장을 손에 넣었다!');
+yield* say('세라: 마을 남쪽 바닷가에는 은퇴한 명인이 계세요. 도전해 보세요!');
+yield* ending()}
 function* talkLeader(n){
 if(!G.flags.leader&&!(G.flags.d_gt1&&G.flags.d_gt2&&G.flags.d_gt3)){yield* say('하람: 도전자 세 명을 먼저 쓰러뜨리고 오렴!');return}
 if(G.flags.leader){yield* say('하람: 훌륭한 트레이너야! 앞으로도 멋진 모험을 이어 가렴!');return}
@@ -1627,14 +1970,15 @@ G.flags.leader=true;
 sfx('lv');
 yield* say('하람: 승리의 증표로 깃털훈장을 주마. 받아라!');
 yield* say(eunn(PN)+' 깃털훈장을 손에 넣었다!');
-yield* say('하람: 도시 동쪽 솔잎숲길을 지나면 별빛마을이 나온다.');
+yield* say('하람: 도시 동쪽 솔잎숲길을 지나 별빛마을, 그리고 호반숲길 너머 은빛포구에도 도장이 있단다.');
 yield* say('하람: 이제 막 시작이다. 더 넓은 세상을 보고 오렴!');
 yield* ending()}
 function* ending(){
 yield* fade(1,20);
 mode='ending';
 yield* fade(0,20);
-yield* say('도장주 하람을 쓰러뜨리고 모험을 완수했다!',0);
+yield* say(G.flags.leader2?'도장주 세라까지 쓰러뜨리고 두 도장을 모두 정복했다!':'도장주 하람을 쓰러뜨리고 모험을 완수했다!',0);
+if(G.flags.rk4)yield* say('먹구름단의 야망까지 막아 낸 영웅이 되었다!',0);
 yield* say('플레이해 주셔서 감사합니다! 수고하셨어요!',0);
 const i=yield* menu(['계속 탐험하기','처음부터 다시 시작'],24,100,112,1,false,0);
 yield* fade(1,16);
@@ -1673,15 +2017,25 @@ function readSave(){
 try{const t=localStorage.getItem(SAVEK);return t?JSON.parse(t):null}catch(e){return null}}
 function applyFlags(){
 const f=G.flags;
+if(f.leader2)f.rk1=f.rk2=f.rk3=f.rk4=true;
 npcById(world.town,'rivalT').vis=!f.guided;
 npcById(world.lab,'rival1').vis=!f.rival1;
 npcById(world.route,'rival2').vis=!f.rival2;
-npcById(world.town2,'rival3').vis=false}
+npcById(world.town2,'rival3').vis=false;
+npcById(world.town3,'rival4').vis=false;
+npcById(world.town3,'master').vis=!!f.leader2;
+npcById(world.route2,'rk1a').vis=npcById(world.route2,'rk1b').vis=!f.rk1;
+npcById(world.town2,'rk2a').vis=npcById(world.town2,'rk2b').vis=!f.rk2;
+npcById(world.route3,'rk3a').vis=!f.rk3;
+npcById(world.depot,'boss').vis=!f.rk4}
 function* loadIn(){fadeA=1;yield* fade(0,16)}
 function loadGame(sv){
 const g=Object.assign(newG(),sv.G);
 if(!Array.isArray(g.party)||!Array.isArray(g.box))return false;
 G=g;
+while(G.dex.s.length<SP.length)G.dex.s.push(0);
+while(G.dex.c.length<SP.length)G.dex.c.push(0);
+while(G.bag.length<ITEMS.length)G.bag.push(0);
 for(let i=0;i<G.party.length;i++)dexC(G.party[i]);
 for(let i=0;i<G.box.length;i++)dexC(G.box[i]);
 P1=newP();world=buildWorld();applyFlags();
@@ -1750,7 +2104,54 @@ bindBtn($('bM'),v=>{if(v)P.m=true});
 bindBtn($('bS'),v=>{if(v)P.s=true});
 bindBtn($('bI'),v=>{if(v)P.i=true});
 bindBtn($('bK'),v=>{if(v)P.k=true});
-cv.addEventListener('pointerdown',()=>{ac();if(mode==='title')P.a=true});
+let cvId=-1,cvx=0,cvy=0,cvMv=false,cvDir=false;
+function canWalk(){return mode==='world'&&!ui.dlg&&!ui.scr&&!ui.menu&&!ui.evo&&!ui.end&&!ui.heal&&!ui.lvup}
+function tapAt(lx,ly){
+if(mode==='title'){P.a=true;return}
+const m=ui.menu;
+if(m){
+if(lx>=m.x&&lx<m.x+m.w&&ly>=m.y&&ly<m.y+m.h){
+const c=Math.min(m.cols-1,Math.max(0,((lx-m.x-6)/m.cw)|0)),r=Math.max(0,((ly-m.y-3)/m.rh)|0),i=r*m.cols+c;
+if(i<m.items.length){m.sel=i;P.a=true}}
+else P.b=true;
+return}
+if(ui.dlg){P.a=true;return}
+const s=ui.scr;
+if(s){
+if(ly<15){P.b=true;return}
+if(s.t==='party'){const i=s.top+(((ly-18)/20)|0);if(ly>=18&&i<s.list.length){s.sel=i;P.a=true}}
+else if(s.t==='shop'||s.t==='bag'){const i=s.top+(((ly-17)/17)|0);if(ly>=17&&ly<87&&i<s.list.length){s.sel=i;P.a=true}}
+else if(s.t==='dex'){
+if(s.det)P.a=true;
+else if(ly>=18){const r=((ly-18)/25)|0,i=((r+s.top)<<1)+(lx>=78?1:0);if(r<=4&&i<SP.length){s.sel=i;P.a=true}}}
+else if(s.t==='sum'){if(lx<45)swp=2;else if(lx>115)swp=3;else P.b=true}
+else if(s.t==='starter'){const i=Math.max(0,Math.min(2,((lx-4)/52)|0));if(s.sel===i)P.a=true;else{s.sel=i;sfx('sel')}}
+else P.a=true;
+return}
+if(B&&B.mode==='menu'){if(lx>=80&&ly>=BOXY){B.sel=(lx>=124?1:0)+(ly>=BOXY+26?2:0);P.a=true}return}
+if(B&&B.mode==='moves'){
+if(ly>=BOXY){const i=(lx>=88?1:0)+(ly>=BOXY+20?2:0);if(i<B.pm.mv.length){B.msel=i;P.a=true}}
+else P.b=true;
+return}
+P.a=true}
+cv.addEventListener('pointerdown',e=>{
+ac();
+if(e.button===2){P.b=true;return}
+if(cvId>=0)return;
+cvId=e.pointerId;cv.setPointerCapture(e.pointerId);cvx=e.clientX;cvy=e.clientY;cvMv=false;cvDir=false});
+cv.addEventListener('pointermove',e=>{
+if(e.pointerId!==cvId)return;
+const dx=e.clientX-cvx,dy=e.clientY-cvy,m=Math.hypot(dx,dy),ax=Math.abs(dx),ay=Math.abs(dy);
+if(canWalk()){
+if(m>=14){cvMv=true;cvDir=true;if(joyId<0)joyDir=ax>ay?(dx>0?3:2):(dy>0?0:1)}
+else if(cvDir&&joyId<0)joyDir=-1}
+else if(m>22){cvMv=true;swp=ax>ay?(dx>0?3:2):(dy>0?0:1);cvx=e.clientX;cvy=e.clientY}});
+const cvEnd=e=>{
+if(e.pointerId!==cvId)return;
+if(cvDir&&joyId<0)joyDir=-1;
+if(!cvMv&&e.type==='pointerup'){const r=cv.getBoundingClientRect();tapAt((e.clientX-r.left)/r.width*VW-OX,(e.clientY-r.top)/r.height*H)}
+cvId=-1;cvDir=false};
+cv.addEventListener('pointerup',cvEnd);cv.addEventListener('pointercancel',cvEnd);
 document.addEventListener('contextmenu',e=>e.preventDefault());
 const KM={ArrowUp:1,KeyW:1,ArrowDown:0,KeyS:0,ArrowLeft:2,KeyA:2,ArrowRight:3,KeyD:3};
 window.addEventListener('keydown',e=>{
