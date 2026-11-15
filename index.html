@@ -530,7 +530,7 @@ let areaT='';const ban={t:'',f:0};
 function enterMap(k,x,y,d){
 const pk=cur?cur.k:'';cur=world[k];
 if(G&&G.flags&&k!=='home'&&k!=='home2')G.flags.ctlOff=true;
-if(cur.ttl&&cur.ttl!==areaT){areaT=cur.ttl;ban.t=cur.ttl;ban.f=150}
+if(cur.ttl&&cur.ttl!==areaT){areaT=cur.ttl;ban.t=cur.ttl+(cur.wx?' · '+WXN[cur.wx]:'');ban.f=150}
 P1.x=x;P1.y=y;P1.d=d;P1.ox=0;P1.oy=0;P1.mv=0;P1.turn=0;
 if(G&&G.flags&&pk!==k){
 if(!cur.sea)G.surf=false;
@@ -806,6 +806,7 @@ m.npcs.push(npc('dt3',4,5,3,'grunt',{tr:{view:3,name:'단원 안개',party:[[6,1
 w.depot=m;
 w.mart.stock=[0,1,2,3];w.tmart2.stock=[0,1,2,3];w.tmart3.stock=[0,1,2,3,4];
 buildNew(w);
+decorate(w);
 return w}
 const TH={f:{g:GRS,e:GRT,t:TRE},s:{g:SND,e:SDT,t:RCK},a:{g:ASH,e:SDT,t:RCK},n:{g:SNW,e:SNT,t:STW}};
 function syncNpcs(){
@@ -863,7 +864,7 @@ return m}
 function mkCity(w,k,ttl,thk,o){
 const th=TH[thk],m=mapNew(28,20,th.g,k);m.ttl=ttl;m.rp=th.g;fz(m,ttl,4,7);
 R(m,0,0,28,2,th.t);R(m,0,0,2,20,th.t);R(m,26,0,2,20,th.t);R(m,0,18,28,2,th.t);
-bld(m,2,3,5,ROR,2);bld(m,8,3,5,ROB,2);bld(m,14,3,4,ROP,1);S1(m,15,6,WAL);
+bld(m,2,3,5,ROR,2);bld(m,8,3,5,ROB,2);bld(m,14,3,4,ROP,1);
 if(o.g)bld(m,19,3,7,ROY,3);else{bld(m,19,3,7,ROP,3);S1(m,22,6,WAL)}
 R(m,0,9,28,2,GRD);R(m,4,7,1,2,GRD);R(m,10,7,1,2,GRD);if(o.g)R(m,22,7,1,2,GRD);
 if(o.pond)R(m,4,13,6,4,WAT);
@@ -877,6 +878,8 @@ S1(m,2,11,SGN);m.signs['2,11']=ttl+'\n'+o.sg;
 lbl(m,4,6,'쉼터',1);lbl(m,10,6,'상점',2);if(o.g)lbl(m,22,6,'도장',0);
 m.warps.push({x:4,y:6,to:k+'c',tx:3,ty:4,d:1,rs:{m:k,x:4,y:7,d:0}},{x:10,y:6,to:k+'m',tx:3,ty:4,d:1});
 if(o.g)m.warps.push({x:22,y:6,to:k+'g',tx:5,ty:14,d:1});
+m.warps.push({x:15,y:6,to:k+'h',tx:4,ty:5,d:1});
+if(o.g){R(m,24,18,1,2,GRD);S1(m,25,17,SGN);m.signs['25,17']='골목길\n(뭔가 숨겨져 있을지도?)';m.warps.push({x:24,y:19,to:k+'a',tx:11,ty:12,d:1})}
 m.warps.push({x:0,y:9,to:o.w[0],tx:o.w[1],ty:o.w[2],d:2},{x:0,y:10,to:o.w[0],tx:o.w[1],ty:o.w[2]+1,d:2});
 m.warps.push({x:27,y:9,to:o.e[0],tx:o.e[1],ty:o.e[2],d:3,need:o.en,msg:o.em},{x:27,y:10,to:o.e[0],tx:o.e[1],ty:o.e[2]+1,d:3,need:o.en,msg:o.em});
 const np=[[13,13],[18,16],[24,11]];
@@ -885,7 +888,70 @@ w[k]=m;
 w[k+'c']=mkIn(k+'c','center',k,4,7);
 w[k+'m']=mkIn(k+'m','mart',k,10,7);w[k+'m'].stock=o.stock;
 if(o.g)w[k+'g']=mkGym(k,o.g);
+w[k+'h']=mkHouse(k);w[k+'h2']=mkHouse2(k);if(o.g)w[k+'a']=mkAlley(k,Object.assign({ttl},o));
 return m}
+function mkHouse(k){
+const m=mapNew(9,7,FLR,k+'h');room(m);
+S1(m,1,1,BKS);S1(m,2,1,BKS);S1(m,5,1,PLT);S1(m,7,1,STA);R(m,3,3,2,1,TBL);S1(m,4,6,MAT);
+m.warps.push({x:4,y:6,to:k,tx:15,ty:7,d:0},{x:7,y:1,to:k+'h2',tx:7,ty:2,d:0});
+m.npcs.push(npc(k+'hn',2,4,0,'old',{wander:1,msg:['어서 오렴. 2층에 올라가 보렴.','창밖 경치가 아주 좋단다.']}));
+return m}
+function mkHouse2(k){
+const n=parseInt(k.slice(1))||5,m=mapNew(9,7,FLR,k+'h2');room(m);
+S1(m,1,1,BED);S1(m,3,1,BKS);S1(m,4,1,BKS);S1(m,5,1,PLT);S1(m,7,1,STD);R(m,3,4,3,1,TBL);S1(m,1,5,PLT);
+m.warps.push({x:7,y:1,to:k+'h',tx:7,ty:2,d:0});
+itm(m,2,3,n<5?1:22,1);itm(m,7,5,n<5?11:12,2);itm(m,6,3,n<5?21:3,1);
+m.npcs.push(npc(k+'hb',5,5,0,'girl',{wander:1,msg:['2층 창문으로 도시가 다 보여!','골목길에도 숨은 아이템이 있대.']}));
+return m}
+function mkAlley(k,o){
+const m=mapNew(22,14,GRD,k+'a');m.ttl=o.ttl+' 골목길';m.wx=1;m.rp=GRD;
+R(m,0,0,22,1,WAL);R(m,0,13,22,1,WAL);R(m,0,0,1,14,WAL);R(m,21,0,1,14,WAL);
+const bl=[[1,1,7],[10,1,4],[16,1,5],[1,7,4],[7,7,6],[15,7,6]];
+for(let i=0;i<bl.length;i++){const b=bl[i];R(m,b[0],b[1],b[2],2,i%2?ROB:ROR);for(let x=0;x<b[2];x++)S1(m,b[0]+x,b[1]+2,x%2?WIN:WAL)}
+S1(m,8,4,PLT);S1(m,13,6,PLT);S1(m,5,10,PLT);S1(m,16,10,PLT);
+R(m,1,12,2,1,BLK);R(m,19,12,2,1,BLK);S1(m,19,4,BLK);
+S1(m,11,13,MAT);m.warps.push({x:11,y:13,to:k,tx:24,ty:18,d:1});
+const L=Math.max(10,(o.g?o.g.party[0][1]:20)-4);
+m.npcs.push(trNpc(k+'a1',5,8,3,T('골목 건달 도윤','grunt',[[4,L],[6,L]],L*40,'여긴 우리 구역이야!','크윽... 졌다.','골목 안쪽에 좋은 게 있다던데.')));
+m.npcs.push(trNpc(k+'a2',13,8,3,T('골목 건달 하준','grunt',[[8,L],[9,L+1]],L*42,'어딜 지나가려고?','이럴 수가...','우산 챙겨 다녀. 여긴 자주 비 와.')));
+m.npcs.push(npc(k+'a3',3,5,0,'old',{wander:1,msg:['골목길엔 비가 자주 와.','비 오는 날엔 불꽃 기술이 약해지니 조심하게.']}));
+m.npcs.push(npc(k+'a4',18,5,0,'boy',{wander:1,msg:['막다른 골목 끝에 뭔가 숨겨져 있대!']}));
+itm(m,8,1,1,2);itm(m,9,2,22,1);itm(m,14,1,12,1);itm(m,15,2,21,1);itm(m,2,5,0,2);itm(m,19,10,11,2);itm(m,1,10,3,1);
+return m}
+function rng(s){let h=2166136261;for(let i=0;i<s.length;i++){h^=s.charCodeAt(i);h=Math.imul(h,16777619)}return()=>{h^=h<<13;h^=h>>>17;h^=h<<5;return((h>>>0)%100000)/100000}}
+function openAt(m,x,y){for(let j=-1;j<=1;j++)for(let i=-1;i<=1;i++){const a=x+i,b=y+j;if(a<0||b<0||a>=m.w||b>=m.h||SOL[m.t[b*m.w+a]])return false}return true}
+function spotOk(m,x,y,open){
+const t=m.t[y*m.w+x];if(SOL[t]||t===SGN||t===DOR||t===MAT||t===STA||t===STD||t===WAT||t===WAT2)return false;
+for(let i=0;i<m.warps.length;i++){const w=m.warps[i];if(Math.abs(w.x-x)<=2&&Math.abs(w.y-y)<=2)return false}
+for(let i=0;i<m.npcs.length;i++){const n=m.npcs[i];if(Math.abs(n.x-x)<=1&&Math.abs(n.y-y)<=1)return false}
+if(m.items)for(let i=0;i<m.items.length;i++)if(m.items[i].x===x&&m.items[i].y===y)return false;
+return !open||openAt(m,x,y)}
+const WXK={route2:2,route3:1,route4:2,route5:1,route6:3,route7:3,route8:3,route9:4,route10:1};
+const WXL={0:['오늘은 날씨가 좋아서 산책 중이야.'],1:['비 오는 날엔 불꽃 기술이 약해져.','물 타입은 비 오는 날 신나지!'],2:['바람이 세면 기술이 잘 빗나가.','비행 타입은 바람 속에서도 끄떡없대.'],3:['흙먼지 때문에 앞이 안 보여.','땅 타입은 먼지 속에서도 잘 맞춘대.'],4:['눈보라 속에선 힘이 안 나.','얼음 타입만 신나 보이네.']};
+const NPCC=['girl','boy','old'];
+function decorate(w){
+for(const k in w){
+const m=w[k];
+if(WXK[k])m.wx=WXK[k];
+if(!(m.enc||m.encAny)||m.sea||m.w<30)continue;
+const r=rng(k),n=parseInt(k.replace(/\D/g,''))||1,cave=!!m.encAny&&!m.enc;
+const pool=[[0,1],[0,2],[3,1],[2,2],[1,1],[21,1],[11,1],[2,1]];
+if(n>=6)pool.push([12,1],[22,1],[11,2],[13,1],[14,1]);
+const want=cave?4:6;let got=0,tr=0;
+while(got<want&&tr++<400){
+const x=1+((r()*(m.w-2))|0),y=1+((r()*(m.h-2))|0);
+if(!spotOk(m,x,y,false))continue;
+if(!cave&&!ENC[m.t[y*m.w+x]])continue;
+const q=pool[(r()*pool.length)|0];itm(m,x,y,q[0],q[1]);got++}
+if(cave)continue;
+const lines=WXL[m.wx||0],cnt=3;let nn=0;tr=0;
+while(nn<cnt&&tr++<400){
+const x=2+((r()*(m.w-4))|0),y=2+((r()*(m.h-4))|0);
+if(!spotOk(m,x,y,true))continue;
+const ms=[lines[(r()*lines.length)|0],'이 길은 '+(m.ttl||'')+'이야.\n조련사들이 길목을 지키고 있어.'];
+const o={wander:1,msg:ms};
+if(nn===0){const gk='gv_'+k,gi=n>=6?22:1;o.msg=null;o.fn=function*(){if(G.flags[gk]){yield* say('아까 준 건 잘 쓰고 있지?');return}G.flags[gk]=true;G.bag[gi]++;sfx('ok');yield* say('길 가는 사람끼리 돕고 살아야지.\n이거 받아!');yield* say(eunn(PN)+' '+eul(ITEMS[gi].n)+' 받았다!')}}
+m.npcs.push(npc(k+'x'+nn,x,y,(r()*4)|0,NPCC[nn%3],o));nn++}}}
 function mkMaze(k,seed,o){
 const CW=10,CH=6,W=31,H=19,m=mapNew(W,H,o.wt||CVW,k);
 let sd=seed;const rnd=()=>{sd=(Math.imul(sd,1664525)+1013904223)>>>0;return sd/4294967296};
@@ -1385,7 +1451,7 @@ ctx.drawImage(TILES,gti*TS,8,TS,8,sx,sy+8,TS,8)}
 for(let i=0;i<m.npcs.length;i++)if(m.npcs[i].y>P1.y)drawEnt(m.npcs[i],cx,cy);
 for(let i=0;i<GPN;i++)if(gpl[i]>0){ctx.fillStyle=gpl[i]&4?'#58c040':'#2f8a2c';ctx.fillRect(rp(gpx[i]-cx),rp(gpy[i]-cy),2,2)}
 if(m.night)drawNight(cx,cy,x0,x1,y0,y1);
-if(m.dark)drawDark(cx,cy)}
+if(m.dark)drawDark(cx,cy);if(m.wx)drawWx(m.wx)}
 const DKM=[null,null];
 function dkMask(l){
 if(DKM[l])return DKM[l];
@@ -1822,12 +1888,34 @@ let b=a[0],bs=-1;
 for(let k=0;k<a.length;k++){const mv=MV[f.mv[a[k]]],sc=mv[2]*EF[mv[1]][SP[t.s].t]*(SP[f.s].t===mv[1]?1.5:1);if(sc>bs){bs=sc;b=a[k]}}
 return b}
 const stM=v=>v>=0?(2+v)/2:2/(2-v);
-const atkV=m=>m.at*stM(m.ga)*(m.st===4?.5:1),defV=m=>m.df*stM(m.gd),spdV=m=>m.sd*(m.st===2?.5:1);
+
+const WXN=['','비','바람','흙먼지','눈'],WXM=['','비가 내려 불꽃 기술과\n움직임이 둔해졌다!','강한 바람 때문에\n기술이 잘 빗나간다!','흙먼지 때문에\n앞이 잘 보이지 않는다!','눈보라가 몰아쳐\n공격이 약해졌다!'];
+let WX=0;
+const WXP=48,wpx=new Float32Array(WXP),wpy=new Float32Array(WXP),wps=new Float32Array(WXP);let wxInit=false;
+function drawWx(wx){
+const v=VW;
+if(!wxInit){wxInit=true;for(let i=0;i<WXP;i++){wpx[i]=Math.random()*v;wpy[i]=Math.random()*H;wps[i]=Math.random()}}
+if(wx===1){
+ctx.fillStyle='rgba(30,50,90,.22)';ctx.fillRect(0,0,v,H);ctx.fillStyle='#a8c8f0';
+for(let i=0;i<WXP;i++){wpx[i]-=1.2;wpy[i]+=5.5+wps[i]*2;if(wpy[i]>H){wpy[i]=-6;wpx[i]=Math.random()*(v+30)}ctx.fillRect(wpx[i]|0,wpy[i]|0,1,5)}}
+else if(wx===2){
+ctx.fillStyle='rgba(240,250,255,.6)';
+for(let i=0;i<WXP;i++){wpx[i]-=4+wps[i]*3;if(wpx[i]<-12){wpx[i]=v+Math.random()*20;wpy[i]=Math.random()*H}
+if(i&3){ctx.fillRect(wpx[i]|0,wpy[i]|0,10,1)}else{ctx.fillStyle='#58a040';ctx.fillRect(wpx[i]|0,(wpy[i]+Math.sin(wpx[i]*.2)*3)|0,2,2);ctx.fillStyle='rgba(240,250,255,.6)'}}}
+else if(wx===3){
+ctx.fillStyle='rgba(160,110,50,.26)';ctx.fillRect(0,0,v,H);ctx.fillStyle='#d8b078';
+for(let i=0;i<WXP;i++){wpx[i]-=2.5+wps[i]*2;if(wpx[i]<-4){wpx[i]=v+Math.random()*10;wpy[i]=Math.random()*H}ctx.fillRect(wpx[i]|0,(wpy[i]+Math.sin(wpx[i]*.1)*2)|0,2,1)}}
+else{
+ctx.fillStyle='rgba(200,220,255,.12)';ctx.fillRect(0,0,v,H);ctx.fillStyle='#f8f8ff';
+for(let i=0;i<WXP;i++){wpy[i]+=.8+wps[i]*.6;wpx[i]+=Math.sin(wpy[i]*.08+i)*.4-.2;if(wpy[i]>H){wpy[i]=-3;wpx[i]=Math.random()*v}ctx.fillRect(wpx[i]|0,wpy[i]|0,2,2)}}}
+function wxAcc(m){if(!WX||!B||m!==B.pm)return 1;const t=SP[m.s].t;return WX===2?(t===5?1:.85):WX===3?(t===6?1:.8):1}
+const atkV=m=>m.at*stM(m.ga)*(m.st===4?.5:1),defV=m=>m.df*stM(m.gd),spdV=m=>m.sd*(m.st===2?.5:1)*(WX===1&&B&&m===B.pm?.8:1);
 function dexS(m){G.dex.s[m.s]=1}
 function dexC(m){G.dex.s[m.s]=1;G.dex.c[m.s]=1}
+function wxDm(a,mv){if(!WX||!B||a!==B.pm)return 1;if(WX===1&&mv[1]===1)return .5;if(WX===4&&SP[a.s].t!==7)return .85;return 1}
 function calcDmg(a,d,mv){
 const e=EF[mv[1]][SP[d.s].t],stab=SP[a.s].t===mv[1]?1.5:1,crit=Math.random()<.0625;
-let dm=Math.floor((((2*a.l/5+2)*mv[2]*atkV(a)/defV(d))/50+2)*stab*e*(crit?1.5:1)*(.85+Math.random()*.15));
+let dm=Math.floor((((2*a.l/5+2)*mv[2]*atkV(a)/defV(d))/50+2)*stab*e*(crit?1.5:1)*(.85+Math.random()*.15)*wxDm(a,mv));
 if(e>0&&dm<1)dm=1;
 return{dm,e,crit}}
 function firstAlive(){for(let i=0;i<G.party.length;i++)if(G.party[i].hp>0)return i;return -1}
@@ -1881,7 +1969,7 @@ if(mi>=0)a.pp[mi]--;
 yield* say((pl?'':'상대 ')+nm(a)+'의 '+mv[0]+'!',22);
 if(pl)B.lp=8;else B.lf=8;
 yield* wait(10);
-if(Math.random()*100>=mv[3]){yield* say('하지만 빗나갔다!',22);return false}
+if(Math.random()*100>=mv[3]*(pl?wxAcc(a):1)){yield* say('하지만 빗나갔다!',22);return false}
 if(mv[2]===0){yield* statusMove(a,d,mv,pl);return false}
 const r=calcDmg(a,d,mv);
 if(!pl)r.dm=Math.max(1,Math.floor(r.dm*.7));
@@ -2037,6 +2125,8 @@ yield* say(eunn(tr.name)+' '+eul(nm(b.fm))+' 내보냈다!',30)
 }else{
 b.showF=true;
 yield* say('앗! 야생 '+iga(nm(b.fm))+' 나타났다!',34)}
+WX=cur.wx||0;
+if(WX)yield* say(WXM[WX],34);
 yield* sendOut(b.pi);
 for(;;){
 const act=yield* pickAct();
@@ -2164,6 +2254,7 @@ function* signScript(s){yield* say(s)}
 function interact(){
 const fx=P1.x+DX[P1.d],fy=P1.y+DY[P1.d],n=npcAt(fx,fy);
 if(n){if(n.mv>0)return;script=talk(n);return}
+const its=cur.items;if(its)for(let i=0;i<its.length;i++){const it=its[i];if(!G.flags[it.k]&&((it.x===fx&&it.y===fy)||(it.x===P1.x&&it.y===P1.y))){script=pickItem(it);return}}
 if(fx>=0&&fy>=0&&fx<cur.w&&fy<cur.h){
 const t=cur.t[fy*cur.w+fx];
 if(t===SGN){const s=cur.signs[fx+','+fy];if(s)script=signScript(s)}
@@ -2211,7 +2302,6 @@ const m=cur;
 const tt=m.t[P1.y*m.w+P1.x];
 if(G.surf&&tt!==WAT&&tt!==WAT2)G.surf=false;
 for(let i=0;i<m.warps.length;i++){const w=m.warps[i];if(w.x===P1.x&&w.y===P1.y){script=doWarp(w);return}}
-if(m.items)for(let i=0;i<m.items.length;i++){const it=m.items[i];if(it.x===P1.x&&it.y===P1.y&&!G.flags[it.k]){script=pickItem(it);return}}
 for(let i=0;i<m.trig.length;i++){const z=m.trig[i];if(!G.flags[z.f]&&(!z.need||G.flags[z.need])&&P1.x>=z.x&&P1.x<z.x+z.w&&P1.y>=z.y&&P1.y<z.y+z.h){script=z.fn();return}}
 for(let i=0;i<m.npcs.length;i++){const n=m.npcs[i];if(n.tr&&n.vis&&G.flags.starter&&!G.flags['d_'+n.id]&&sees(n)){script=trainerSeen(n);return}}
 const t0=m.t[P1.y*m.w+P1.x];
